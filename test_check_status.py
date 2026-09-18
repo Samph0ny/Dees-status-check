@@ -5,7 +5,7 @@ Deze tests gebruiken nagebootste pagina's, dus ze werken zonder internet.
 """
 
 from check_status import (
-    page_text, classify_text, context_around, parse_json_payload,
+    page_text, best_text, classify_text, context_around, parse_json_payload,
 )
 
 # Nabootsing van een echt probleem: het menu van ZorgDomein bevat het item
@@ -49,9 +49,10 @@ def test_script_tags_are_ignored():
 
 
 def test_menu_items_are_not_read_as_incident():
-    text = page_text(NAV_NOISE_PAGE)
-    assert "Voor wie" not in text, "het menu hoort verwijderd te zijn"
-    assert classify_text(text)[0] == "ok"
+    # Via best_text, want dat is het pad dat in productie gebruikt wordt.
+    text, _, _ = best_text(NAV_NOISE_PAGE)
+    assert classify_text(text)[0] == "ok", "menu-item wordt nog als storing gelezen"
+    assert "Voor wie" not in page_text(NAV_NOISE_PAGE, "strict")
 
 
 def test_real_incident_in_content_is_still_found():
@@ -78,6 +79,39 @@ def test_instatus_json():
         "page": {}, "activeIncidents": [],
         "activeMaintenances": [{"name": "Nachtelijk onderhoud"}]})
     assert planned["status"] == "maintenance"
+
+
+def test_aurora_wording_is_recognised():
+    # Letterlijk de bewoording die Aurora Innovation gebruikt.
+    page = ("<html><body><main><h1>Service Status</h1>"
+            "<p>Current service information</p>"
+            "<p>Press the \u201c+\u201d to expand and view the ongoing disturbances.</p>"
+            "<p>No current disturbances</p></main></body></html>")
+    text, _, _ = best_text(page)
+    assert classify_text(text)[0] == "ok"
+
+
+def test_falls_back_when_strict_filter_removes_everything():
+    # Een pagina waarvan de inhoud in een element met een menu-achtige class zit.
+    # Het strenge niveau gooit alles weg; het vangnet hoort de tekst terug te halen.
+    page = ("<html><body><div class=\"sidebar-content\">"
+            "<p>Er zijn op dit moment geen storingen bekend bij onze dienstverlening. "
+            "Mocht u toch iets ondervinden, neem dan gerust contact met ons op via de "
+            "gebruikelijke kanalen. Wij houden deze pagina actueel.</p>"
+            "</div></body></html>")
+    strict = page_text(page, "strict")
+    text, level, lengths = best_text(page)
+    assert len(strict) < 200, "voorwaarde van de test klopt niet meer"
+    assert level != "strict", "het vangnet is niet aangesproken"
+    assert classify_text(text)[0] == "ok"
+    assert lengths["raw"] > lengths["strict"]
+
+
+def test_text_lengths_reveal_javascript_only_pages():
+    # Een pagina zonder inhoud in de HTML: alle niveaus leveren vrijwel niets op.
+    page = "<html><head><title>Status</title></head><body><div id=\"app\"></div></body></html>"
+    _, _, lengths = best_text(page)
+    assert max(lengths.values()) < 200
 
 
 def test_statuspage_json():
