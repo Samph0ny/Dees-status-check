@@ -1,44 +1,47 @@
 {
-  "generated_at": "2026-09-18T17:44:04+00:00",
+  "generated_at": "2026-09-18T17:50:35+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-09-18T17:43:50+00:00",
+      "checked_at": "2026-09-18T17:50:19+00:00",
       "status": "unknown",
       "detail": "Geen bekende signaalwoorden gevonden — controleer de pagina zelf.",
       "components": [],
       "open_incidents": [],
       "method": "text",
       "http_status": 200,
-      "excerpt": "Service Status - Aurora Innovation Skip to content Our Solution Aurora teleQ Aurora teleQ is a modern communication solution for managing patient contacts that streamlines the flow of communication between patients and healthcare providers. Aurora teleQ Book a Demo AURORA TELEQ Time-Scheduled Callback Reduce wait times with scheduled callbacks Call Duo Smart collaboration with dual calls Voicemail"
+      "match_context": "",
+      "excerpt": "Service Status Current service information Press the “+” to expand and view the ongoing disturbances. No current disturbances"
     },
     {
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-09-18T17:43:52+00:00",
-      "status": "incident",
-      "detail": "Gevonden op de pagina: “actuele storing”",
+      "checked_at": "2026-09-18T17:50:21+00:00",
+      "status": "unknown",
+      "detail": "Geen bekende signaalwoorden gevonden — controleer de pagina zelf.",
       "components": [],
       "open_incidents": [],
       "method": "text",
       "http_status": 200,
-      "excerpt": "Storingen & Onderhoud - ZorgDomein U  Inloggen Zorgprofessionals U  Inloggen Zorgprofessionals Home Voor wie Verwijzers Huisartsenpraktijken Verloskundigenpraktijken Overige verwijzers 1.5 lijns zorgaanbieders Zorgprofessionals Gehandicaptenzorg GGZ-instellingen Huisartsenpost Hulpmiddelenleveranciers Laboratoria Sociaal domein Verpleging, verzorging en thuiszorg Zelfstandige klinieken Ziekenhui"
+      "match_context": "",
+      "excerpt": "Storingen & Onderhoud - ZorgDomein"
     },
     {
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-09-18T17:44:01+00:00",
+      "checked_at": "2026-09-18T17:50:32+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “alle systemen operationeel”",
       "components": [],
       "open_incidents": [],
       "method": "text",
       "http_status": 200,
-      "excerpt": "LanTel Cloud Status Inschrijven voor updates Alle systemen operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat het ons weten! Onderhoud Geen onderhoud gemeld. Onder"
+      "match_context": "LanTel Cloud Status Alle systemen operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte ge…",
+      "excerpt": "LanTel Cloud Status Alle systemen operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat het ons weten! Onderhoud Geen onderhoud gemeld. Onderdelen LanTel Connect Operationeel LanTel Hosted Operationeel LanTel Hosted Blue Operationeel Incidenten LanTel Hosted Move Operationeel Incidenten LanTel Hosted Teams OC ? Operationeel Incidenten LanTel Hosted Wave Operationeel Incidenten Fax Diensten ? Operationeel Incidenten Add-on - Aurora TeleQ Operationeel Incidenten Add-on - CTI ? Operationeel Incidenten Add-on - Hosted Teams Attendant Console Operationeel Incidenten Add-on - Hosted Teams Contact Center Operationeel Incidenten Add-on - Microsoft Teams bellen DR ? Operationeel Incidenten LanTel Mobile Operationeel LanTel Service Operationeel LanTel SIP Operationeel Via Operator Connect E-Fax, Faxen over IP Integratie met HIS/CRM applicaties Bellen met Microsoft Teams via LanTel Hosted Wave/Move/Flow. Direct Routing Incident geschiedenis Algemene storing - TeleQ Gesloten | 17.09.2026 | 11:26 GMT+02:00 De verstoring betrof een probleem bij de achterliggende KPN verbinding bij TeleQ waardoor oproepen niet correct werden verwerkt. Dit is inmiddels verholpen. + Geschiedenis tonen Open | 17.09.2026 | 11:00 GMT+02:00 Momenteel krijgen wij meerdere meldingen ov"
     }
   ]
 }
