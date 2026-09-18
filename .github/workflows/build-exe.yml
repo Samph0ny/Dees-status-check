@@ -4,6 +4,15 @@ name: Windows .exe bouwen
 # kies "Windows .exe bouwen" en klik op "Run workflow".
 on:
   workflow_dispatch:
+    inputs:
+      maak_release:
+        description: "Ook een release aanmaken met een vaste downloadlink"
+        type: boolean
+        default: false
+
+# Nodig om een release te kunnen aanmaken.
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -47,3 +56,20 @@ jobs:
             dist/Status Check.exe
             dist/sites.json
           if-no-files-found: error
+          retention-days: 90
+
+      - name: Alles in één zipbestand
+        if: inputs.maak_release
+        run: Compress-Archive -Path "dist/Status Check.exe","dist/sites.json" -DestinationPath "Status-Check-Windows.zip"
+        shell: pwsh
+
+      - name: Release met vaste downloadlink
+        if: inputs.maak_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          $tag = "build-" + (Get-Date -Format "yyyyMMdd-HHmm")
+          gh release create $tag "Status-Check-Windows.zip" `
+            --title "Status Check ($tag)" `
+            --notes "Windows-versie van Status Check. Pak de zip uit en houd sites.json naast de .exe staan."

@@ -47,10 +47,16 @@ Python op Windows en macOS. Op Linux installeer je het los met
 
 Zo hoef je Python niet te installeren om de app te gebruiken.
 
-**Via GitHub (geen Python nodig op je eigen computer):** ga naar het tabblad
-**Actions**, kies **Windows .exe bouwen** en klik op **Run workflow**. Na een paar
-minuten staat onderaan die run een bestand `Status-Check-Windows` klaar om te
-downloaden. Daar zitten `Status Check.exe` en `sites.json` in.
+**Via GitHub (aanbevolen — geen Python en geen .bat nodig):** ga naar het tabblad
+**Actions**, kies **Windows .exe bouwen** en klik op **Run workflow**. GitHub bouwt
+het programma op een Windows-machine. Na een paar minuten staat onderaan die run
+een bestand `Status-Check-Windows` klaar om te downloaden, met `Status Check.exe`
+en `sites.json` erin.
+
+Zet je bij het starten **Ook een release aanmaken** aan, dan komt het resultaat er
+bovendien als release bij te staan. Dat geeft een vaste downloadlink onder
+**Releases**, handig als je het later nog eens nodig hebt of naar een collega wilt
+sturen. Zonder die optie verdwijnt de download na 90 dagen.
 
 **Op je eigen Windows-computer:** dubbelklik `build_exe.bat`. Het resultaat komt in
 de map `dist`.
