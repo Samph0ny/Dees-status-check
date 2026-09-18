@@ -19,6 +19,13 @@ for naam in ("tkinter", "tkinter.font"):
 sys.modules["tkinter"].font = sys.modules["tkinter.font"]
 sys.modules["tkinter"].Canvas = object  # RefreshKnop erft hiervan
 
+# pystray en Pillow zijn optioneel; de app hoort ook zonder te werken.
+for naam in ("pystray", "PIL", "PIL.Image"):
+    module = types.ModuleType(naam)
+    module.__getattr__ = lambda _n: MagicMock()  # type: ignore[attr-defined]
+    sys.modules.setdefault(naam, module)
+sys.modules["PIL"].Image = sys.modules["PIL.Image"]
+
 import check_status
 import status_app as app
 
@@ -63,6 +70,44 @@ def test_progress_grows_with_the_fraction():
     assert abs(lengte(app.deel_van_pad(pad, 1.0)) - vol) < 1.0
 
 
+def test_perimeter_matches_the_maths():
+    """Vangt een pad dat een verkeerde kant op loopt.
+
+    Een eerdere versie sprong na de rechteronderhoek naar het verkeerde punt,
+    waardoor er een diagonaal door de knop liep. Het pad liep nog wel rond en
+    groeide nog netjes, dus die tests merkten er niets van. De omtrek was
+    echter tien pixels te lang, en dat is hier wel te zien.
+    """
+    x0, y0, x1, y1, r = 1, 1, 111, 35, 5
+    pad = app.afgeronde_rechthoek(x0, y0, x1, y1, r)
+    gemeten = sum(math.dist(pad[i], pad[i + 1]) for i in range(len(pad) - 1))
+    exact = 2 * (x1 - x0 - 2 * r) + 2 * (y1 - y0 - 2 * r) + 2 * math.pi * r
+    # De bogen bestaan uit rechte stukjes, dus iets korter dan de echte cirkel.
+    assert abs(gemeten - exact) < 0.5, f"omtrek {gemeten:.2f} hoort {exact:.2f} te zijn"
+
+
+def test_every_point_lies_on_the_outline():
+    """Elk punt hoort op de rand te liggen, niet ergens binnenin."""
+    x0, y0, x1, y1, r = 1, 1, 111, 35, 5
+    middelpunten = [(x0 + r, y0 + r), (x1 - r, y0 + r),
+                    (x0 + r, y1 - r), (x1 - r, y1 - r)]
+    for x, y in app.afgeronde_rechthoek(x0, y0, x1, y1, r):
+        assert x0 - 0.01 <= x <= x1 + 0.01 and y0 - 0.01 <= y <= y1 + 0.01, \
+            f"punt ({x:.1f}, {y:.1f}) ligt buiten de knop"
+        op_rechte = (abs(x - x0) < 0.01 or abs(x - x1) < 0.01
+                     or abs(y - y0) < 0.01 or abs(y - y1) < 0.01)
+        op_boog = any(abs(math.dist((x, y), m) - r) < 0.01 for m in middelpunten)
+        assert op_rechte or op_boog, f"punt ({x:.1f}, {y:.1f}) ligt niet op de rand"
+
+
+def test_no_segment_cuts_across_the_button():
+    """Geen enkel segment mag langer zijn dan de langste rechte zijde."""
+    x0, y0, x1, y1, r = 1, 1, 111, 35, 5
+    pad = app.afgeronde_rechthoek(x0, y0, x1, y1, r)
+    langste = max(math.dist(pad[i], pad[i + 1]) for i in range(len(pad) - 1))
+    assert langste <= (x1 - x0 - 2 * r) + 0.01, f"segment van {langste:.1f} is een diagonaal"
+
+
 def test_progress_is_clamped():
     # Waarden buiten 0..1 mogen niet tot een rare lijn leiden. Let op: het pad
     # loopt rond, dus het laatste punt valt samen met het eerste en wordt bij
@@ -82,6 +127,106 @@ def test_font_picks_the_first_available():
 
 def test_font_falls_back_when_nothing_matches():
     assert app.kies_lettertype(["Bestaat Niet"], "val", beschikbaar=set()) == "val"
+
+
+# --- Knipperen van het taakbalkicoon -----------------------------------------
+def test_no_flashing_when_everything_is_fine():
+    vorige = {"a": "ok", "b": "ok"}
+    nieuwe = {"a": "ok", "b": "ok"}
+    assert not app.moet_knipperen(vorige, nieuwe)
+    assert app.alles_in_orde(nieuwe.values())
+
+
+def test_flashing_when_a_problem_appears():
+    for probleem in ("incident", "error", "maintenance", "unknown"):
+        vorige = {"a": "ok", "b": "ok"}
+        nieuwe = {"a": "ok", "b": probleem}
+        assert app.moet_knipperen(vorige, nieuwe), f"{probleem} hoort te knipperen"
+        assert not app.alles_in_orde(nieuwe.values())
+
+
+def test_no_repeat_flashing_for_a_known_problem():
+    # Een storing die al bestond, hoort niet elke ronde opnieuw te knipperen.
+    vorige = {"a": "ok", "b": "incident"}
+    nieuwe = {"a": "ok", "b": "incident"}
+    assert not app.moet_knipperen(vorige, nieuwe)
+
+
+def test_flashing_when_a_problem_changes_kind():
+    vorige = {"a": "maintenance"}
+    nieuwe = {"a": "incident"}
+    assert app.moet_knipperen(vorige, nieuwe)
+
+
+def test_flashing_on_the_very_first_round():
+    # Bij de eerste ronde is er nog geen vorige stand; een probleem moet dan
+    # wel degelijk opvallen.
+    assert app.moet_knipperen({}, {"a": "incident"})
+    assert not app.moet_knipperen({}, {"a": "ok"})
+
+
+def test_recovery_stops_the_flashing():
+    vorige = {"a": "incident"}
+    nieuwe = {"a": "ok"}
+    assert not app.moet_knipperen(vorige, nieuwe)
+    assert app.alles_in_orde(nieuwe.values())
+
+
+def test_flashing_is_a_no_op_off_windows():
+    # Buiten Windows mag de aanroep niets doen en zeker niet klappen.
+    app_object = object.__new__(app.StatusApp)
+    if sys.platform != "win32":
+        app_object._knipper(True)   # mag geen fout geven
+        app_object._knipper(False)
+
+
+# --- Systeemvak --------------------------------------------------------------
+def test_tray_shows_the_worst_status():
+    assert app.ergste(["ok", "ok", "ok"]) == "ok"
+    assert app.ergste(["ok", "maintenance"]) == "maintenance"
+    assert app.ergste(["maintenance", "incident"]) == "incident"
+    assert app.ergste(["unknown", "error", "maintenance"]) == "error"
+    assert app.ergste([]) == "ok"
+
+
+def test_every_status_has_a_tray_colour():
+    for status in list(app.LABEL) + ["checking"]:
+        assert status in app.TRAY_KLEUR, f"geen systeemvakkleur voor {status}"
+
+
+def test_tray_colours_are_visible_on_a_taskbar():
+    """De accentkleur is te donker voor het systeemvak en hoort opgelicht te zijn.
+
+    Op een donkere taakbalk haalt #791F65 maar 1,7:1. Grafische elementen
+    hebben 3:1 nodig om herkenbaar te zijn.
+    """
+    def helderheid(hex_kleur):
+        r, g, b = (int(hex_kleur[i:i + 2], 16) / 255 for i in (1, 3, 5))
+        f = lambda c: c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+        r, g, b = f(r), f(g), f(b)
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+    def contrast(a, b):
+        la, lb = sorted((helderheid(a), helderheid(b)), reverse=True)
+        return (la + 0.05) / (lb + 0.05)
+
+    donkere_taakbalk = "#202020"
+    for status in ("ok", "incident", "maintenance", "error"):
+        kleur = app.TRAY_KLEUR[status]
+        assert contrast(kleur, donkere_taakbalk) >= 3.0, \
+            f"{status} ({kleur}) haalt maar {contrast(kleur, donkere_taakbalk):.1f}:1"
+
+    assert app.TRAY_KLEUR["ok"] != app.ACCENT, "de accentkleur hoort opgelicht te zijn"
+
+
+def test_tray_tooltip_wording():
+    assert app.tray_tekst({"A": "ok", "B": "ok"}).endswith("alles in orde")
+
+    een = app.tray_tekst({"A": "ok", "B": "incident"})
+    assert "storing" in een.lower() and "B" in een
+
+    meer = app.tray_tekst({"A": "incident", "B": "maintenance", "C": "ok"})
+    assert "2 diensten" in meer
 
 
 # --- Volledigheid ------------------------------------------------------------

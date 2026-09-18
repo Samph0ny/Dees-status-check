@@ -32,6 +32,13 @@ except ImportError:  # pragma: no cover - alleen op systemen zonder tkinter
     )
     raise SystemExit(1)
 
+try:
+    import pystray
+    from PIL import Image
+    TRAY_BESCHIKBAAR = True
+except ImportError:  # zonder deze pakketten draait de app gewoon zonder systeemvak
+    TRAY_BESCHIKBAAR = False
+
 from check_status import load_sites, check_site
 
 
@@ -90,6 +97,71 @@ TEKST_IN_ORDE = "Geen actuele storingen"
 ERNST = ["incident", "error"]
 
 
+# Het icoon in het systeemvak is maar 16 bij 16 pixels en staat op de taakbalk,
+# niet op onze eigen donkere achtergrond. De accentkleur is daar te donker voor
+# (1,7:1 op een donkere taakbalk), dus die wordt lichter gemaakt. De andere
+# kleuren zijn licht bijgesteld zodat ze op een donkere en een lichte taakbalk
+# allebei minstens 3:1 halen.
+TRAY_KLEUR = {
+    "ok": "#C232A2",           # accent, opgelicht
+    "incident": "#C95168",     # wijnrood, opgelicht
+    "maintenance": "#8A6E9B",  # pruim
+    "error": "#C08A4A",        # amber
+    "unknown": "#8B8188",
+    "checking": "#6E656B",
+}
+
+# Van zwaarst naar lichtst: het systeemvak toont de ernstigste status.
+VOLGORDE = ["incident", "error", "maintenance", "unknown", "checking", "ok"]
+
+
+def ergste(statussen) -> str:
+    """Geeft de zwaarste status uit een verzameling."""
+    aanwezig = set(statussen)
+    for status in VOLGORDE:
+        if status in aanwezig:
+            return status
+    return "ok"
+
+
+def tray_tekst(per_dienst: dict) -> str:
+    """Maakt de tekst die verschijnt als je over het systeemvak-icoon zweeft.
+
+    per_dienst is {naam van de dienst: status}.
+    """
+    problemen = [naam for naam, status in per_dienst.items() if status not in RUSTIG]
+    if not problemen:
+        return "Status Check \u2014 alles in orde"
+    if len(problemen) == 1:
+        naam = problemen[0]
+        return f"Status Check \u2014 {LABEL.get(per_dienst[naam], '?').lower()}: {naam}"
+    return f"Status Check \u2014 {len(problemen)} diensten met een melding"
+
+
+# Statussen die geen aandacht vragen. Alles daarbuiten (storing, onderhoud,
+# onbekend, onbereikbaar) laat het taakbalkicoon knipperen.
+RUSTIG = {"ok"}
+
+
+def alles_in_orde(statussen) -> bool:
+    return all(status in RUSTIG for status in statussen)
+
+
+def moet_knipperen(vorige: dict, nieuwe: dict) -> bool:
+    """Bepaalt of het taakbalkicoon moet gaan knipperen.
+
+    Alleen bij een nieuw of veranderd probleem. Een storing die al drie rondes
+    bestaat, laat het icoon dus niet elke keer opnieuw knipperen: dan zou het
+    blijven ratelen terwijl je het allang weet.
+    """
+    for id_, status in nieuwe.items():
+        if status in RUSTIG:
+            continue
+        if vorige.get(id_) != status:
+            return True
+    return False
+
+
 def ring_kleur(statussen) -> str:
     """Geeft de ringkleur voor de zwaarste status in de lijst."""
     aanwezig = set(statussen)
@@ -105,21 +177,25 @@ def afgeronde_rechthoek(x0, y0, x1, y1, r, per_hoek=6):
     Wordt gebruikt om de voortgangsring te tekenen: door het eerste deel van
     deze punten te verbinden ontstaat een lijn die steeds verder rondloopt.
     """
-    punten = [(x0 + r, y0), (x1 - r, y0)]
+    # Alleen de vier hoeken worden beschreven; de rechte zijden ontstaan vanzelf
+    # doordat het eindpunt van de ene boog en het beginpunt van de volgende op
+    # dezelfde lijn liggen. Zo kan er geen zijde meer verkeerd berekend worden.
     hoeken = [
         (x1 - r, y0 + r, -math.pi / 2, 0.0),          # rechtsboven
         (x1 - r, y1 - r, 0.0, math.pi / 2),           # rechtsonder
         (x0 + r, y1 - r, math.pi / 2, math.pi),       # linksonder
         (x0 + r, y0 + r, math.pi, 1.5 * math.pi),     # linksboven
     ]
-    rechte = [(x1, y1 - r), (x0, y1 - r), (x0, y0 + r)]
-    for i, (cx, cy, a0, a1) in enumerate(hoeken):
+
+    def op_boog(cx, cy, hoek):
+        return (cx + r * math.cos(hoek), cy + r * math.sin(hoek))
+
+    punten = [(x0 + r, y0)]                # begin van de bovenrand
+    for cx, cy, a0, a1 in hoeken:
+        punten.append(op_boog(cx, cy, a0))  # einde van de rechte zijde ervoor
         for stap in range(1, per_hoek + 1):
-            a = a0 + (a1 - a0) * stap / per_hoek
-            punten.append((cx + r * math.cos(a), cy + r * math.sin(a)))
-        if i < len(rechte):
-            punten.append(rechte[i])
-    punten.append((x0 + r, y0))
+            punten.append(op_boog(cx, cy, a0 + (a1 - a0) * stap / per_hoek))
+    punten.append((x0 + r, y0))            # terug bij het begin
     return punten
 
 
@@ -189,6 +265,7 @@ class StatusApp:
         self.sites = sites
         self.rijen: dict[str, dict] = {}
         self.statussen: dict[str, str] = {s["id"]: "checking" for s in sites}
+        self.vorige_statussen: dict[str, str] = {}
         self.resultaten: queue.Queue = queue.Queue()
         self.bezig = False
         self.cyclus_start = time.monotonic()
@@ -203,9 +280,126 @@ class StatusApp:
         self.sans = kies_lettertype(
             ["Segoe UI", "Helvetica Neue", "Helvetica", "DejaVu Sans"], "TkDefaultFont")
 
+        self.tray = None
+        self._tray_basis = None
+
         self._bouw_venster()
+        self._bouw_tray()
+        # Het kruisje verbergt het venster; afsluiten gaat via het systeemvak.
+        root.protocol("WM_DELETE_WINDOW", self._verberg)
         self._ververs_nu()
         self.root.after(TICK_MS, self._tik)
+
+    # --- Systeemvak -------------------------------------------------------
+    def _bouw_tray(self) -> None:
+        """Zet het icoon in het systeemvak, naast de klok."""
+        if not TRAY_BESCHIKBAAR:
+            return
+        pad = bestandspad("icon.png")
+        if not pad.exists():
+            return
+        try:
+            self._tray_basis = Image.open(pad).convert("RGBA")
+            menu = pystray.Menu(
+                pystray.MenuItem("Tonen", self._tray_tonen, default=True),
+                pystray.MenuItem("Nu verversen", self._tray_verversen),
+                pystray.Menu.SEPARATOR,
+                pystray.MenuItem("Afsluiten", self._tray_afsluiten),
+            )
+            self.tray = pystray.Icon(
+                "status_check", self._tray_beeld("checking"),
+                "Status Check", menu)
+            threading.Thread(target=self.tray.run, daemon=True).start()
+        except Exception:
+            self.tray = None  # zonder systeemvak werkt de app nog prima
+
+    def _tray_beeld(self, status: str):
+        """Kleurt de vleermuis in de kleur die bij een status hoort."""
+        kleur = TRAY_KLEUR.get(status, TRAY_KLEUR["unknown"])
+        gekleurd = Image.new("RGBA", self._tray_basis.size, kleur)
+        gekleurd.putalpha(self._tray_basis.getchannel("A"))
+        return gekleurd
+
+    def _werk_tray_bij(self) -> None:
+        if not self.tray:
+            return
+        per_dienst = {s["name"]: self.statussen.get(s["id"], "unknown")
+                      for s in self.sites}
+        try:
+            self.tray.icon = self._tray_beeld(ergste(per_dienst.values()))
+            self.tray.title = tray_tekst(per_dienst)
+        except Exception:
+            pass
+
+    # De menu-items draaien in de thread van pystray, dus het werk wordt
+    # teruggegeven aan tkinter met after().
+    def _tray_tonen(self, *_):
+        self.root.after(0, self._toon_venster)
+
+    def _tray_verversen(self, *_):
+        self.root.after(0, self._ververs_nu)
+
+    def _tray_afsluiten(self, *_):
+        self.root.after(0, self._afsluiten)
+
+    def _toon_venster(self) -> None:
+        self.root.deiconify()
+        self.root.lift()
+        self.root.focus_force()
+
+    def _verberg(self) -> None:
+        """Het kruisje verbergt het venster als er een systeemvak-icoon is."""
+        if self.tray:
+            self.root.withdraw()
+        else:
+            self._afsluiten()
+
+    def _afsluiten(self) -> None:
+        if self.tray:
+            try:
+                self.tray.stop()
+            except Exception:
+                pass
+        self.root.destroy()
+
+    def _knipper(self, aan: bool) -> None:
+        """Laat het taakbalkicoon knipperen (alleen Windows).
+
+        Windows heeft hier FlashWindowEx voor: hetzelfde mechanisme dat een
+        mailprogramma gebruikt bij een nieuw bericht. Met FLASHW_TIMERNOFG
+        knippert het door tot je het venster naar voren haalt, en niet langer.
+
+        macOS en Linux hebben geen vergelijkbare aanroep die vanuit tkinter
+        bereikbaar is; daar gebeurt er niets.
+        """
+        if sys.platform != "win32":
+            return
+        try:
+            import ctypes
+            from ctypes import wintypes
+
+            class FLASHWINFO(ctypes.Structure):
+                _fields_ = [("cbSize", wintypes.UINT),
+                            ("hwnd", wintypes.HWND),
+                            ("dwFlags", wintypes.DWORD),
+                            ("uCount", wintypes.UINT),
+                            ("dwTimeout", wintypes.DWORD)]
+
+            FLASHW_STOP = 0
+            FLASHW_ALL = 3          # zowel de titelbalk als de taakbalkknop
+            FLASHW_TIMERNOFG = 12   # blijf knipperen tot het venster vooraan staat
+
+            # winfo_id() geeft het binnenste venster; de taakbalkknop hoort bij
+            # het venster daarboven.
+            binnenste = self.root.winfo_id()
+            hwnd = ctypes.windll.user32.GetParent(binnenste) or binnenste
+
+            info = FLASHWINFO(
+                ctypes.sizeof(FLASHWINFO), hwnd,
+                (FLASHW_ALL | FLASHW_TIMERNOFG) if aan else FLASHW_STOP, 0, 0)
+            ctypes.windll.user32.FlashWindowEx(ctypes.byref(info))
+        except Exception:
+            pass  # knipperen is een extraatje, nooit een reden om te stoppen
 
     def _zet_icoon(self) -> None:
         """Zet het venstericoon. Mislukt dat, dan draait de app gewoon door."""
@@ -316,6 +510,13 @@ class StatusApp:
             if res.get("__klaar__"):
                 self.bezig = False
                 self.klok.configure(text=datetime.now().strftime("%H:%M"))
+                # Pas nu beoordelen: tijdens de ronde staat alles op 'checking'.
+                if moet_knipperen(self.vorige_statussen, self.statussen):
+                    self._knipper(True)
+                elif alles_in_orde(self.statussen.values()):
+                    self._knipper(False)
+                self.vorige_statussen = dict(self.statussen)
+                self._werk_tray_bij()
                 continue
             self._toon(res)
 

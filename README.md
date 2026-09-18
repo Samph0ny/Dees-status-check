@@ -33,6 +33,26 @@ interval. Met die knop forceer je direct een controle. De
 controles draaien op de achtergrond, dus het venster blijft bruikbaar terwijl er
 gewacht wordt.
 
+Naast de klok, in het systeemvak, staat een vleermuisicoon in de kleur van de
+zwaarste status: alles in orde, onderhoud, onbereikbaar of storing. Zweef er met
+je muis overheen voor een korte samenvatting. Rechtsklikken geeft een menu met
+**Tonen**, **Nu verversen** en **Afsluiten**; dubbelklikken opent het venster.
+
+Die kleuren zijn iets lichter dan in het venster. Het icoon is maar 16 bij 16
+pixels en staat op de taakbalk in plaats van op onze eigen donkere achtergrond;
+de accentkleur haalt daar maar 1,7:1 contrast en zou wegvallen.
+
+**Het kruisje sluit de app niet af** maar verbergt het venster — het blijft in het
+systeemvak doordraaien. Afsluiten doe je via het menu daar. Ontbreken `pystray` of
+`pillow`, dan is er geen systeemvak-icoon en sluit het kruisje de app gewoon af.
+
+Is er iets anders dan "in orde", dan gaat het taakbalkicoon knipperen tot je het
+venster naar voren haalt. Dat gebeurt alleen bij een nieuw of veranderd probleem:
+een storing die al drie rondes bestaat laat het icoon niet elke keer opnieuw
+ratelen. Windows heeft hier een eigen aanroep voor (`FlashWindowEx`); op macOS en
+Linux bestaat geen vergelijkbare mogelijkheid vanuit tkinter, dus daar gebeurt er
+niets.
+
 Dat lijntje krijgt de kleur van de zwaarste status die op dat moment te zien is:
 wijnrood bij een storing, amber als een pagina onbereikbaar is, en anders de
 accentkleur. Zo zie je aan de onderrand al of er iets aan de hand is.
