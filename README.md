@@ -28,7 +28,8 @@ python3 status_app.py
 Op Windows kun je `start_app.bat` dubbelklikken, op macOS `start_app.command`.
 
 De app ververst zichzelf elke 70 seconden. De voortgang daarvan loopt als een dun
-lijntje rond de Refresh-knop; met die knop forceer je meteen een controle. De
+lijntje rond de Refresh-knop; dat lijntje is meteen de enige aanduiding van het
+interval. Met die knop forceer je direct een controle. De
 controles draaien op de achtergrond, dus het venster blijft bruikbaar terwijl er
 gewacht wordt.
 
@@ -53,6 +54,9 @@ downloaden. Daar zitten `Status Check.exe` en `sites.json` in.
 
 **Op je eigen Windows-computer:** dubbelklik `build_exe.bat`. Het resultaat komt in
 de map `dist`.
+
+Het icoon zit in de .exe verwerkt: `icon.ico` wordt het icoon van het bestand zelf,
+`icon.png` wordt meegeleverd voor het venster.
 
 Houd `sites.json` altijd náást de .exe staan. Het programma leest dat bestand van
 schijf, dus je kunt diensten toevoegen of wijzigen zonder opnieuw te bouwen.
@@ -80,6 +84,7 @@ bestand in deze repository, en GitHub Pages serveert de pagina.
 | `status_app.py` | De desktop-app. Gebruikt dezelfde logica als hierboven. |
 | `start_app.bat` / `start_app.command` | Dubbelklik-starters voor Windows en macOS. |
 | `build_exe.bat` | Bouwt de .exe op je eigen Windows-computer. |
+| `icon.png` / `icon.ico` | Het vleermuisicoon: voor het venster en voor de .exe. |
 | `test_check_status.py` | Tests voor de herkenningslogica (werkt zonder internet). |
 | `test_status_app.py` | Tests voor de desktop-app (werkt zonder beeldscherm). |
 | `docs/index.html` | Het dashboard dat je in je browser ziet. |
@@ -109,6 +114,11 @@ Het script probeert twee methodes, in deze volgorde:
    een site waarbij het filter te veel wegsnijdt helemaal zonder tekst komt te
    zitten. Welk niveau gebruikt is, staat in het veld `method`, bijvoorbeeld
    `text:strict`.
+
+In het venster staat bij een dienst zonder problemen altijd dezelfde zin: "Geen
+actuele storingen". Welke zinsnede de herkenning precies vond is nuttig bij het
+bijstellen, maar dat is diagnostiek — dat blijft in `docs/data/status.json` staan
+en hoort niet in beeld.
 
 Mogelijke uitkomsten:
 

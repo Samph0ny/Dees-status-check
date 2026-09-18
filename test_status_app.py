@@ -98,6 +98,27 @@ def test_only_problem_states_are_tinted():
     assert set(app.TINT) == {"incident", "maintenance", "error"}
 
 
+def test_ok_rows_show_a_fixed_sentence():
+    # Bij "in orde" hoort in het venster geen scraper-uitleg te staan, maar
+    # altijd dezelfde zin. De gevonden zinsnede blijft wel in status.json staan.
+    assert app.TEKST_IN_ORDE == "Geen actuele storingen"
+    assert "Gevonden op de pagina" not in app.TEKST_IN_ORDE
+
+
+def test_icon_files_are_present():
+    from pathlib import Path as _P
+    hier = _P(app.__file__).parent
+    for naam in ("icon.png", "icon.ico"):
+        bestand = hier / naam
+        assert bestand.exists(), f"{naam} ontbreekt"
+        assert bestand.stat().st_size > 0, f"{naam} is leeg"
+
+
+def test_resource_path_finds_bundled_files():
+    # Zonder PyInstaller moet het bestand naast het script gevonden worden.
+    assert app.bestandspad("icon.png").exists()
+
+
 def test_ok_label_is_readable():
     # De accentkleur is te donker voor kleine tekst, daarom staat het label
     # in botwit en draagt alleen het stipje de kleur.

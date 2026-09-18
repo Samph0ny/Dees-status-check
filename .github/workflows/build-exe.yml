@@ -31,7 +31,9 @@ jobs:
       - name: Programma bouwen
         # --onefile:  alles in één bestand
         # --windowed: geen zwart terminalvenster erachter
-        run: pyinstaller --onefile --windowed --name "Status Check" status_app.py
+        # --icon:     het icoon van het .exe-bestand zelf
+        # --add-data: icon.png meeleveren voor het venstericoon
+        run: pyinstaller --onefile --windowed --name "Status Check" --icon icon.ico --add-data "icon.png;." status_app.py
 
       - name: sites.json ernaast zetten
         # Zo kun je diensten toevoegen zonder opnieuw te bouwen.
