@@ -27,17 +27,38 @@ python3 status_app.py
 
 Op Windows kun je `start_app.bat` dubbelklikken, op macOS `start_app.command`.
 
-In de app kies je zelf hoe vaak er ververst wordt (30 seconden tot 1 uur) en kun je
-met "Nu verversen" meteen een controle afdwingen. De controles draaien op de
-achtergrond, dus het venster blijft bruikbaar terwijl er gewacht wordt.
+De app ververst zichzelf elke 70 seconden. De voortgang daarvan loopt als een dun
+lijntje rond de Refresh-knop; met die knop forceer je meteen een controle. De
+controles draaien op de achtergrond, dus het venster blijft bruikbaar terwijl er
+gewacht wordt.
 
-**Waarom niet elke 5 seconden?** De ondergrens is bewust 30 seconden. Vaker is niet
-netjes tegenover de websites die je bevraagt, en statuspagina's veranderen toch
-hooguit een paar keer per dag.
+Dat lijntje krijgt de kleur van de zwaarste status die op dat moment te zien is:
+wijnrood bij een storing, amber als een pagina onbereikbaar is, en anders de
+accentkleur. Zo zie je aan de onderrand al of er iets aan de hand is.
+
+Wil je een ander interval? Pas `INTERVAL` bovenin `status_app.py` aan.
 
 **Als de app niet start met "No module named tkinter":** tkinter hoort standaard bij
 Python op Windows en macOS. Op Linux installeer je het los met
 `sudo apt install python3-tk`.
+
+## Een .exe maken voor Windows
+
+Zo hoef je Python niet te installeren om de app te gebruiken.
+
+**Via GitHub (geen Python nodig op je eigen computer):** ga naar het tabblad
+**Actions**, kies **Windows .exe bouwen** en klik op **Run workflow**. Na een paar
+minuten staat onderaan die run een bestand `Status-Check-Windows` klaar om te
+downloaden. Daar zitten `Status Check.exe` en `sites.json` in.
+
+**Op je eigen Windows-computer:** dubbelklik `build_exe.bat`. Het resultaat komt in
+de map `dist`.
+
+Houd `sites.json` altijd náást de .exe staan. Het programma leest dat bestand van
+schijf, dus je kunt diensten toevoegen of wijzigen zonder opnieuw te bouwen.
+
+Een .exe kan alleen op Windows gebouwd worden — vandaar dat de workflow op een
+Windows-machine draait.
 
 ## Hoe het werkt (in het kort)
 
@@ -58,12 +79,14 @@ bestand in deze repository, en GitHub Pages serveert de pagina.
 | `check_status.py` | Haalt de pagina's op en bepaalt de status. |
 | `status_app.py` | De desktop-app. Gebruikt dezelfde logica als hierboven. |
 | `start_app.bat` / `start_app.command` | Dubbelklik-starters voor Windows en macOS. |
+| `build_exe.bat` | Bouwt de .exe op je eigen Windows-computer. |
 | `test_check_status.py` | Tests voor de herkenningslogica (werkt zonder internet). |
 | `test_status_app.py` | Tests voor de desktop-app (werkt zonder beeldscherm). |
 | `docs/index.html` | Het dashboard dat je in je browser ziet. |
 | `docs/data/status.json` | De laatste meting. Wordt automatisch geschreven. |
 | `docs/data/history.json` | De laatste 240 metingen per dienst (voor het balkje). |
 | `.github/workflows/check-status.yml` | De uurlijkse automatische controle. |
+| `.github/workflows/build-exe.yml` | Bouwt de Windows-.exe, handmatig te starten. |
 
 ## Hoe de status bepaald wordt
 

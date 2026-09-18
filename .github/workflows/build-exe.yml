@@ -1,0 +1,47 @@
+name: Windows .exe bouwen
+
+# Deze workflow draait niet vanzelf. Start hem via het tabblad "Actions",
+# kies "Windows .exe bouwen" en klik op "Run workflow".
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Een Windows-machine is nodig: een .exe kan alleen op Windows gemaakt worden.
+    runs-on: windows-latest
+    steps:
+      - name: Code ophalen
+        uses: actions/checkout@v4
+
+      - name: Python installeren
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Benodigde pakketten installeren
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Controleren of de logica klopt voor we bouwen
+        run: |
+          python test_check_status.py
+          python test_status_app.py
+
+      - name: Programma bouwen
+        # --onefile:  alles in één bestand
+        # --windowed: geen zwart terminalvenster erachter
+        run: pyinstaller --onefile --windowed --name "Status Check" status_app.py
+
+      - name: sites.json ernaast zetten
+        # Zo kun je diensten toevoegen zonder opnieuw te bouwen.
+        run: copy sites.json dist\sites.json
+
+      - name: Resultaat beschikbaar maken
+        uses: actions/upload-artifact@v4
+        with:
+          name: Status-Check-Windows
+          path: |
+            dist/Status Check.exe
+            dist/sites.json
+          if-no-files-found: error
