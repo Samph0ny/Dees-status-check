@@ -25,7 +25,13 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
-ROOT = Path(__file__).parent
+# Als PyInstaller er een .exe van heeft gemaakt, staat de code in een tijdelijke
+# map maar hoort sites.json naast het programma te staan, zodat je die kunt
+# blijven aanpassen zonder opnieuw te bouwen.
+if getattr(sys, "frozen", False):
+    ROOT = Path(sys.executable).parent
+else:
+    ROOT = Path(__file__).parent
 DATA_DIR = ROOT / "docs" / "data"
 STATUS_FILE = DATA_DIR / "status.json"
 HISTORY_FILE = DATA_DIR / "history.json"
