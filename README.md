@@ -20,12 +20,17 @@ Er zijn twee manieren om het te gebruiken:
 
 ## De desktop-app
 
+Op Windows dubbelklik je `start_app.bat`, op macOS `start_app.command`. Die
+controleren of alle pakketten aanwezig zijn en installeren ze de eerste keer
+vanzelf. Liever met de hand:
+
 ```bash
 pip install -r requirements.txt
 python3 status_app.py
 ```
 
-Op Windows kun je `start_app.bat` dubbelklikken, op macOS `start_app.command`.
+In de **.exe** zit dit allemaal al ingebouwd: Python zelf en alle pakketten zitten
+in dat ene bestand. Daar hoef je niets voor te installeren.
 
 De app ververst zichzelf elke 70 seconden. De voortgang daarvan loopt als een dun
 lijntje rond de Refresh-knop; dat lijntje is meteen de enige aanduiding van het
