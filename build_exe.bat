@@ -7,7 +7,7 @@ echo Pakketten installeren...
 python -m pip install -r requirements.txt pyinstaller || goto :fout
 
 echo Bouwen...
-python -m PyInstaller --onefile --windowed --name "Status Check" status_app.py || goto :fout
+python -m PyInstaller --onefile --windowed --name "Status Check" --icon icon.ico --add-data "icon.png;." status_app.py || goto :fout
 
 copy sites.json dist\sites.json >nul
 

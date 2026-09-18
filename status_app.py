@@ -18,6 +18,7 @@ import queue
 import sys
 import threading
 import time
+from pathlib import Path
 from datetime import datetime
 
 try:
@@ -32,6 +33,20 @@ except ImportError:  # pragma: no cover - alleen op systemen zonder tkinter
     raise SystemExit(1)
 
 from check_status import load_sites, check_site
+
+
+def bestandspad(naam: str) -> Path:
+    """Vindt een meegeleverd bestand, ook als PyInstaller er een .exe van maakte.
+
+    PyInstaller pakt meegeleverde bestanden uit in een tijdelijke map; het pad
+    daarvan staat in sys._MEIPASS. Daarbuiten ligt het gewoon naast dit script.
+    """
+    tijdelijk = getattr(sys, "_MEIPASS", None)
+    if tijdelijk:
+        kandidaat = Path(tijdelijk) / naam
+        if kandidaat.exists():
+            return kandidaat
+    return Path(__file__).parent / naam
 
 # --- Vaste instellingen -------------------------------------------------------
 INTERVAL = 70           # seconden tussen twee automatische controles
@@ -64,6 +79,11 @@ LABELKLEUR = {"ok": BONE, "incident": WINE, "maintenance": PLUM,
 TINT = {"incident": "#191014", "maintenance": "#16111A", "error": "#1A1610"}
 LABEL = {"ok": "In orde", "incident": "Storing", "maintenance": "Onderhoud",
          "unknown": "Onbekend", "error": "Onbereikbaar", "checking": "Controleren"}
+
+# Bij een dienst zonder problemen tonen we een vaste zin. Welk woord de scraper
+# precies vond is nuttig voor het bijstellen van de herkenning (dat staat in
+# docs/data/status.json), maar in het venster is het alleen ruis.
+TEKST_IN_ORDE = "Geen actuele storingen"
 
 # Van zwaar naar licht. De ring neemt de kleur van de zwaarste status die
 # voorkomt; alles vanaf 'maintenance' valt terug op de accentkleur.
@@ -177,6 +197,7 @@ class StatusApp:
         root.configure(bg=BG)
         root.geometry(f"{VENSTER_B}x{VENSTER_H}")
         root.resizable(False, False)
+        self._zet_icoon()
 
         self.serif = kies_lettertype(["Georgia", "Times New Roman"], "TkDefaultFont")
         self.sans = kies_lettertype(
@@ -185,6 +206,17 @@ class StatusApp:
         self._bouw_venster()
         self._ververs_nu()
         self.root.after(TICK_MS, self._tik)
+
+    def _zet_icoon(self) -> None:
+        """Zet het venstericoon. Mislukt dat, dan draait de app gewoon door."""
+        pad = bestandspad("icon.png")
+        if not pad.exists():
+            return
+        try:
+            self._icoon = tk.PhotoImage(file=str(pad))
+            self.root.iconphoto(True, self._icoon)
+        except tk.TclError:
+            pass  # geen icoon is vervelend, maar geen reden om te stoppen
 
     # --- Venster ----------------------------------------------------------
     def _bouw_venster(self) -> None:
@@ -237,8 +269,6 @@ class StatusApp:
 
         balk = tk.Frame(voet, bg=BG)
         balk.pack(fill="x", padx=22, pady=11)
-        tk.Label(balk, text=f"Ververst automatisch elke {INTERVAL} s", bg=BG,
-                 fg=FAINT, font=(self.sans, 8)).pack(side="left")
         self.knop = RefreshKnop(balk, self._ververs_nu)
         self.knop.lettertype = (self.sans, 8, "bold")
         self.knop.pack(side="right")
@@ -303,7 +333,8 @@ class StatusApp:
         status = res.get("status", "unknown")
         self.statussen[id_] = status
         self._kleur_rij(id_, status)
-        self.rijen[id_]["detail"].configure(text=res.get("detail", ""))
+        tekst = TEKST_IN_ORDE if status == "ok" else res.get("detail", "")
+        self.rijen[id_]["detail"].configure(text=tekst)
         self.knop.kleur = ring_kleur(self.statussen.values())
 
 
