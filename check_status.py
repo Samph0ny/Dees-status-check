@@ -54,6 +54,7 @@ OK_PHRASES = [
     "geen meldingen", "geen incidenten", "geen verstoringen",
     "alles werkt naar behoren", "alle systemen operationeel",
     "alle diensten operationeel", "systemen zijn operationeel",
+    "no current disturbances", "no ongoing disturbances", "no disturbances",
     "no known issues", "no incidents", "no current incidents",
     "no outages", "all systems operational", "all systems are operational",
     "all services operational", "fully operational", "operating normally",
@@ -185,32 +186,76 @@ def parse_json_payload(flavour: str, payload: dict) -> dict | None:
     return None
 
 
-def page_text(html: str) -> str:
-    """Haalt de leesbare inhoud uit de pagina, zonder menu's en footers."""
+# Hoeveel tekst we minimaal willen overhouden. Blijft er minder over, dan heeft
+# het filteren te veel weggesneden en proberen we een mildere variant.
+MIN_TEXT_LENGTH = 200
+
+
+def page_text(html: str, level: str = "strict") -> str:
+    """Haalt de leesbare inhoud uit de pagina.
+
+    Drie niveaus, van streng naar mild:
+
+    - "strict": menu's, footers en elementen met een menu-achtige class weg, en
+      alleen het main/article-gebied als dat er is. Het nauwkeurigst, maar bij
+      sommige sites blijft er te weinig over.
+    - "mild": alleen de duidelijke ruis-tags weg (nav, header, footer).
+    - "raw": alles behalve scripts en opmaak.
+    """
     soup = BeautifulSoup(html, "html.parser")
 
-    for tag in soup(NOISE_TAGS):
+    always_drop = ["script", "style", "noscript", "svg", "iframe"]
+    if level == "raw":
+        drop = always_drop
+    else:
+        drop = NOISE_TAGS
+
+    for tag in soup(drop):
         tag.decompose()
 
-    # Ook elementen weggooien die aan hun class of id te herkennen zijn als menu.
-    for tag in soup.find_all(attrs={"class": True}):
-        if getattr(tag, "decomposed", False):
-            continue
-        if NOISE_ATTR.search(" ".join(tag.get("class") or [])):
-            tag.decompose()
-    for tag in soup.find_all(attrs={"id": True}):
-        if getattr(tag, "decomposed", False):
-            continue
-        if NOISE_ATTR.search(tag.get("id") or ""):
-            tag.decompose()
+    if level == "strict":
+        # Ook elementen weggooien die aan hun class of id te herkennen zijn als menu.
+        for tag in soup.find_all(attrs={"class": True}):
+            if getattr(tag, "decomposed", False):
+                continue
+            if NOISE_ATTR.search(" ".join(tag.get("class") or [])):
+                tag.decompose()
+        for tag in soup.find_all(attrs={"id": True}):
+            if getattr(tag, "decomposed", False):
+                continue
+            if NOISE_ATTR.search(tag.get("id") or ""):
+                tag.decompose()
 
-    # Staat er een duidelijk inhoudsgebied? Gebruik dan alleen dat.
-    region = soup.find("main") or soup.find(attrs={"role": "main"}) or soup.find("article")
-    if region is None or len(region.get_text(strip=True)) < 80:
+        # Staat er een duidelijk inhoudsgebied? Gebruik dan alleen dat.
+        region = soup.find("main") or soup.find(attrs={"role": "main"}) or soup.find("article")
+        if region is None or len(region.get_text(strip=True)) < 80:
+            region = soup
+    else:
         region = soup
 
     text = region.get_text(separator=" ")
     return re.sub(r"\s+", " ", text).strip()
+
+
+def best_text(html: str) -> tuple[str, str, dict]:
+    """Kiest het strengste niveau dat nog genoeg tekst oplevert.
+
+    Geeft (tekst, gebruikt niveau, lengtes per niveau) terug. Die lengtes zijn
+    puur diagnostisch: staat 'raw' ook op bijna nul, dan bevat de HTML zelf geen
+    status en wordt die waarschijnlijk pas door JavaScript ingeladen.
+    """
+    lengths = {}
+    chosen_text, chosen_level = "", "raw"
+    for level in ("strict", "mild", "raw"):
+        text = page_text(html, level)
+        lengths[level] = len(text)
+        if not chosen_text and len(text) >= MIN_TEXT_LENGTH:
+            chosen_text, chosen_level = text, level
+    if not chosen_text:
+        # Alles bleef onder de drempel: neem dan wat er nog het meest was.
+        chosen_level = max(lengths, key=lambda k: lengths[k])
+        chosen_text = page_text(html, chosen_level)
+    return chosen_text, chosen_level, lengths
 
 
 def context_around(text: str, phrase: str, width: int = 120) -> str:
@@ -252,6 +297,7 @@ def check_site(site: dict) -> dict:
         "open_incidents": [],
         "method": "",
         "http_status": None,
+        "text_lengths": {},
         "match_context": "",
         "excerpt": "",
     }
@@ -272,10 +318,13 @@ def check_site(site: dict) -> dict:
         result["detail"] = f"Pagina niet bereikbaar: {exc.__class__.__name__}"
         return result
 
-    text = page_text(resp.text)
+    text, level, lengths = best_text(resp.text)
     status, phrase = classify_text(text)
     result["status"] = status
-    result["method"] = "text"
+    result["method"] = f"text:{level}"
+    # Diagnostisch: hoeveel tekst elk filterniveau opleverde. Staat 'raw' ook laag,
+    # dan zit de status niet in de HTML maar wordt die door JavaScript geladen.
+    result["text_lengths"] = lengths
     result["detail"] = f"Gevonden op de pagina: “{phrase}”" if phrase else (
         "Geen bekende signaalwoorden gevonden — controleer de pagina zelf."
     )
@@ -321,6 +370,9 @@ def main() -> int:
 
     for res in results:
         print(f"{res['status'].upper():<11} {res['name']:<22} ({res['method'] or 'n/a'}) {res['detail']}")
+        if res.get("text_lengths"):
+            lens = " ".join(f"{k}={v}" for k, v in res["text_lengths"].items())
+            print(f"            tekstlengte: {lens}")
         if res.get("match_context"):
             print(f"            context:  {res['match_context']}")
         elif res["excerpt"]:

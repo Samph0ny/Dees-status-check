@@ -50,6 +50,12 @@ Het script probeert twee methodes, in deze volgorde:
    het menu van ZorgDomein bevat het item "Actuele storingen", en zonder filtering
    werd dat gelezen als een echte storing.
 
+   Dat filteren gebeurt op drie niveaus (`strict`, `mild`, `raw`). Het script kiest
+   het strengste niveau dat nog minstens 200 tekens oplevert. Zo wordt voorkomen dat
+   een site waarbij het filter te veel wegsnijdt helemaal zonder tekst komt te
+   zitten. Welk niveau gebruikt is, staat in het veld `method`, bijvoorbeeld
+   `text:strict`.
+
 Mogelijke uitkomsten:
 
 | Status | Betekenis |
@@ -111,7 +117,12 @@ Dan herkent het script de woorden op die pagina nog niet. In
 `docs/data/status.json` staan per dienst twee hulpvelden: `excerpt` (de eerste
 1500 tekens zoals het script de pagina leest, dus na het weggooien van menu's) en
 `match_context` (de tekst rondom de gevonden zinsnede, zodat je kunt zien of het
-om een echte melding gaat). Daar zie je welke bewoording de site
+om een echte melding gaat).
+
+Daarnaast staat er `text_lengths`: hoeveel tekst elk filterniveau opleverde. Staat
+`raw` daar ook op bijna nul, dan bevat de HTML zelf geen status en wordt die pas
+door JavaScript ingeladen. Filteren helpt dan niet — zo'n site heeft een andere
+aanpak nodig. Daar zie je welke bewoording de site
 gebruikt. Voeg die zinsnede toe aan `OK_PHRASES`, `INCIDENT_PHRASES` of
 `MAINTENANCE_PHRASES` bovenin `check_status.py`.
 
