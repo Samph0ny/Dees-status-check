@@ -4,7 +4,20 @@
 Deze tests gebruiken nagebootste pagina's, dus ze werken zonder internet.
 """
 
-from check_status import page_text, classify_text, parse_json_payload
+from check_status import (
+    page_text, classify_text, context_around, parse_json_payload,
+)
+
+# Nabootsing van een echt probleem: het menu van ZorgDomein bevat het item
+# "Actuele storingen", terwijl de pagina zelf meldt dat er niets aan de hand is.
+# Zonder filtering werd dat menu-item als storing gelezen.
+NAV_NOISE_PAGE = """<html><body>
+<nav><ul><li>Home</li><li>Voor wie</li><li>Actuele storingen</li></ul></nav>
+<header><a href="/actuele-storingen/">Actuele storingen</a></header>
+<main><h1>Storingen &amp; Onderhoud</h1>
+<p>Er zijn op dit moment geen meldingen.</p></main>
+<footer>Actuele storingen | Contact</footer>
+</body></html>"""
 
 TEXT_CASES = [
     ("geen storingen (NL)",
@@ -33,6 +46,38 @@ def test_script_tags_are_ignored():
     text = page_text("<html><body><p>All systems operational</p>"
                      "<script>alert('major outage')</script></body></html>")
     assert "major outage" not in text.lower()
+
+
+def test_menu_items_are_not_read_as_incident():
+    text = page_text(NAV_NOISE_PAGE)
+    assert "Voor wie" not in text, "het menu hoort verwijderd te zijn"
+    assert classify_text(text)[0] == "ok"
+
+
+def test_real_incident_in_content_is_still_found():
+    page = NAV_NOISE_PAGE.replace(
+        "Er zijn op dit moment geen meldingen.",
+        "Actuele storing: Verwijzen is niet beschikbaar.")
+    status, phrase = classify_text(page_text(page))
+    assert status == "incident"
+    assert "Verwijzen" in context_around(page_text(page), phrase)
+
+
+def test_instatus_json():
+    clear = parse_json_payload("instatus", {
+        "page": {"name": "LanTel"}, "activeIncidents": [], "activeMaintenances": []})
+    assert clear["status"] == "ok"
+
+    broken = parse_json_payload("instatus", {
+        "page": {}, "activeIncidents": [{"name": "Storing e-mail"}],
+        "activeMaintenances": []})
+    assert broken["status"] == "incident"
+    assert broken["open_incidents"] == ["Storing e-mail"]
+
+    planned = parse_json_payload("instatus", {
+        "page": {}, "activeIncidents": [],
+        "activeMaintenances": [{"name": "Nachtelijk onderhoud"}]})
+    assert planned["status"] == "maintenance"
 
 
 def test_statuspage_json():
