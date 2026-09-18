@@ -1,0 +1,22 @@
+{
+  "sites": [
+    {
+      "id": "aurora",
+      "name": "Aurora Innovation",
+      "url": "https://aurorainnovation.com/en/service-status/",
+      "language": "en"
+    },
+    {
+      "id": "zorgdomein",
+      "name": "ZorgDomein",
+      "url": "https://zorgdomein.com/actuele-storingen/",
+      "language": "nl"
+    },
+    {
+      "id": "lantelcloud",
+      "name": "Lantel Cloud",
+      "url": "https://status.lantelcloud.nl/",
+      "language": "nl"
+    }
+  ]
+}

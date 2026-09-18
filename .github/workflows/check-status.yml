@@ -1,0 +1,52 @@
+name: Statuscontrole
+
+# Wanneer draait dit?
+on:
+  schedule:
+    # Elk uur op het hele uur (tijden in GitHub Actions zijn altijd UTC).
+    - cron: "0 * * * *"
+  # Zo kun je 'm ook handmatig starten via het tabblad "Actions" op GitHub.
+  workflow_dispatch:
+  # En bij elke wijziging aan de code of de configuratie.
+  push:
+    branches: [main]
+
+# De workflow mag terugschrijven naar de repository (de resultaten opslaan).
+permissions:
+  contents: write
+
+# Voorkomt dat twee runs tegelijk naar dezelfde branch schrijven.
+concurrency:
+  group: status-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code ophalen
+        uses: actions/checkout@v4
+
+      - name: Python installeren
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Benodigde pakketten installeren
+        run: pip install -r requirements.txt
+
+      - name: Statuspagina's controleren
+        run: python check_status.py
+
+      - name: Resultaten opslaan in de repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data
+          # Alleen committen als er echt iets veranderd is.
+          if git diff --staged --quiet; then
+            echo "Geen wijzigingen in de status."
+          else
+            git commit -m "Statusupdate $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi

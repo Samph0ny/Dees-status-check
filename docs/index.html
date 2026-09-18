@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Status Check</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --text: #16191d;
+    --muted: #61686f;
+    --line: #e3e6ea;
+    --ok: #1a8a4a;
+    --incident: #c62828;
+    --maintenance: #1565c0;
+    --unknown: #6b7280;
+    --error: #b55a00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171a; --card: #1c2024; --text: #eceef0;
+      --muted: #9aa2aa; --line: #2b3137;
+      --ok: #4ade80; --incident: #f87171; --maintenance: #60a5fa;
+      --unknown: #9ca3af; --error: #fbbf24;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171a; --card: #1c2024; --text: #eceef0;
+    --muted: #9aa2aa; --line: #2b3137;
+    --ok: #4ade80; --incident: #f87171; --maintenance: #60a5fa;
+    --unknown: #9ca3af; --error: #fbbf24;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 16px 64px;
+    background: var(--bg); color: var(--text);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 0.9rem; margin: 0 0 28px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 20px; margin-bottom: 14px;
+  }
+  .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  .name { font-weight: 600; flex: 1 1 auto; min-width: 0; }
+  .badge {
+    font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 999px;
+    border: 1px solid currentColor;
+  }
+  .detail { color: var(--muted); font-size: 0.88rem; margin-top: 10px; }
+  .components { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 0.76rem; padding: 3px 9px; border-radius: 6px;
+    border: 1px solid var(--line); color: var(--muted);
+  }
+  .chip.bad { color: var(--incident); border-color: currentColor; }
+  a { color: inherit; }
+  .link { font-size: 0.82rem; color: var(--muted); margin-top: 10px; display: inline-block; }
+  .spark { display: flex; gap: 2px; margin-top: 12px; }
+  .spark i { width: 5px; height: 16px; border-radius: 2px; background: var(--line); display: block; }
+  .ok { color: var(--ok); } .ok-bg { background: var(--ok); }
+  .incident { color: var(--incident); } .incident-bg { background: var(--incident); }
+  .maintenance { color: var(--maintenance); } .maintenance-bg { background: var(--maintenance); }
+  .unknown { color: var(--unknown); } .unknown-bg { background: var(--unknown); }
+  .error { color: var(--error); } .error-bg { background: var(--error); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Status Check</h1>
+  <p class="sub" id="meta">Laden…</p>
+  <div id="list"></div>
+</div>
+<script>
+const LABELS = {
+  ok: "In orde",
+  incident: "Storing",
+  maintenance: "Onderhoud",
+  unknown: "Onbekend",
+  error: "Niet bereikbaar",
+};
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function timeAgo(iso) {
+  const mins = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (!isFinite(mins)) return iso;
+  if (mins < 1) return "zojuist";
+  if (mins < 60) return `${mins} min geleden`;
+  const h = Math.round(mins / 60);
+  return h < 24 ? `${h} uur geleden` : `${Math.round(h / 24)} dag(en) geleden`;
+}
+
+function card(site, history) {
+  const s = LABELS[site.status] ? site.status : "unknown";
+  const comps = (site.components || []).map(c =>
+    `<span class="chip${c.status === "ok" ? "" : " bad"}">${esc(c.name)}</span>`).join("");
+  const spark = (history[site.id] || []).slice(-40).map(h =>
+    `<i class="${esc(h.s)}-bg" title="${esc(h.t)}"></i>`).join("");
+  return `<div class="card">
+    <div class="row">
+      <span class="dot ${s}-bg"></span>
+      <span class="name">${esc(site.name)}</span>
+      <span class="badge ${s}">${esc(LABELS[s])}</span>
+    </div>
+    ${site.detail ? `<div class="detail">${esc(site.detail)}</div>` : ""}
+    ${comps ? `<div class="components">${comps}</div>` : ""}
+    ${spark ? `<div class="spark">${spark}</div>` : ""}
+    <a class="link" href="${esc(site.url)}" target="_blank" rel="noopener">Bekijk de statuspagina &rarr;</a>
+  </div>`;
+}
+
+async function load() {
+  const bust = `?v=${Date.now()}`;
+  try {
+    const [status, history] = await Promise.all([
+      fetch("data/status.json" + bust).then(r => r.json()),
+      fetch("data/history.json" + bust).then(r => r.json()).catch(() => ({})),
+    ]);
+    document.getElementById("meta").textContent =
+      `Laatste controle: ${timeAgo(status.generated_at)} · ${status.sites.length} diensten`;
+    document.getElementById("list").innerHTML =
+      status.sites.map(s => card(s, history)).join("");
+  } catch (e) {
+    document.getElementById("meta").textContent =
+      "Kon de statusgegevens niet laden. Draait de controle al?";
+  }
+}
+load();
+setInterval(load, 300000);
+</script>
+</body>
+</html>
