@@ -52,7 +52,8 @@ ERROR = "error"              # oranje - pagina niet te bereiken
 OK_PHRASES = [
     "geen storingen", "geen actuele storingen", "geen bekende storingen",
     "geen meldingen", "geen incidenten", "geen verstoringen",
-    "alles werkt naar behoren", "alle systemen operationeel",
+    "alles werkt naar behoren", "werken naar behoren", "werkt naar behoren",
+    "alle systemen operationeel",
     "alle diensten operationeel", "systemen zijn operationeel",
     "no current disturbances", "no ongoing disturbances", "no disturbances",
     "no known issues", "no incidents", "no current incidents",
@@ -188,7 +189,7 @@ def parse_json_payload(flavour: str, payload: dict) -> dict | None:
 
 # Hoeveel tekst we minimaal willen overhouden. Blijft er minder over, dan heeft
 # het filteren te veel weggesneden en proberen we een mildere variant.
-MIN_TEXT_LENGTH = 200
+MIN_TEXT_LENGTH = 120
 
 
 def page_text(html: str, level: str = "strict") -> str:
@@ -235,6 +236,38 @@ def page_text(html: str, level: str = "strict") -> str:
 
     text = region.get_text(separator=" ")
     return re.sub(r"\s+", " ", text).strip()
+
+
+def section_text(html: str, heading: str) -> str:
+    """Geeft alleen de tekst die onder een bepaald kopje staat.
+
+    ZorgDomein zet op één pagina een kopje "Actuele storingen" en daaronder een
+    kopje "Gepland onderhoud". Zonder dit onderscheid telt aangekondigd onderhoud
+    mee als actuele storing, of andersom.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    for tag in soup(["script", "style", "noscript", "svg", "iframe"]):
+        tag.decompose()
+
+    needle = heading.strip().lower()
+    target = None
+    for tag in soup.find_all(re.compile(r"^h[1-6]$")):
+        if needle in tag.get_text(strip=True).lower():
+            target = tag
+            break
+    if target is None:
+        return ""
+
+    level = int(target.name[1])
+    parts = []
+    for sib in target.find_next_siblings():
+        name = getattr(sib, "name", "") or ""
+        # Stoppen bij het volgende kopje van hetzelfde of een hoger niveau.
+        if re.match(r"^h[1-6]$", name) and int(name[1]) <= level:
+            break
+        parts.append(sib.get_text(separator=" "))
+
+    return re.sub(r"\s+", " ", " ".join(parts)).strip()
 
 
 def best_text(html: str) -> tuple[str, str, dict]:
@@ -319,6 +352,15 @@ def check_site(site: dict) -> dict:
         return result
 
     text, level, lengths = best_text(resp.text)
+
+    # Staat er een sectie in sites.json? Dan is die specifieker dan de hele pagina.
+    wanted = site.get("section")
+    if wanted:
+        section = section_text(resp.text, wanted)
+        if len(section) >= 20:
+            text, level = section, f"section:{wanted}"
+            lengths = dict(lengths, section=len(section))
+
     status, phrase = classify_text(text)
     result["status"] = status
     result["method"] = f"text:{level}"
@@ -343,14 +385,28 @@ def load_json(path: Path, fallback):
         return fallback
 
 
-def main() -> int:
+def load_sites() -> list[dict]:
+    """Leest sites.json en geeft de lijst met diensten terug."""
     config = load_json(ROOT / "sites.json", None)
     if not config or not config.get("sites"):
-        print("FOUT: sites.json ontbreekt of bevat geen sites.", file=sys.stderr)
-        return 1
+        return []
+    return config["sites"]
 
-    results = [check_site(site) for site in config["sites"]]
 
+def run_checks(write: bool = True) -> list[dict]:
+    """Controleert alle diensten uit sites.json.
+
+    Met write=True worden de resultaten ook naar docs/data/ geschreven (zoals de
+    GitHub Actions-workflow doet). De desktop-app gebruikt write=False, want die
+    hoeft niets op te slaan.
+    """
+    results = [check_site(site) for site in load_sites()]
+    if write:
+        save_results(results)
+    return results
+
+
+def save_results(results: list[dict]) -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     STATUS_FILE.write_text(
         json.dumps({"generated_at": now_iso(), "sites": results}, indent=2, ensure_ascii=False),
@@ -367,6 +423,14 @@ def main() -> int:
     HISTORY_FILE.write_text(
         json.dumps(history, indent=2, ensure_ascii=False), encoding="utf-8"
     )
+
+
+def main() -> int:
+    if not load_sites():
+        print("FOUT: sites.json ontbreekt of bevat geen sites.", file=sys.stderr)
+        return 1
+
+    results = run_checks(write=True)
 
     for res in results:
         print(f"{res['status'].upper():<11} {res['name']:<22} ({res['method'] or 'n/a'}) {res['detail']}")
