@@ -33,6 +33,13 @@ interval. Met die knop forceer je direct een controle. De
 controles draaien op de achtergrond, dus het venster blijft bruikbaar terwijl er
 gewacht wordt.
 
+Is er iets anders dan "in orde", dan gaat het taakbalkicoon knipperen tot je het
+venster naar voren haalt. Dat gebeurt alleen bij een nieuw of veranderd probleem:
+een storing die al drie rondes bestaat laat het icoon niet elke keer opnieuw
+ratelen. Windows heeft hier een eigen aanroep voor (`FlashWindowEx`); op macOS en
+Linux bestaat geen vergelijkbare mogelijkheid vanuit tkinter, dus daar gebeurt er
+niets.
+
 Dat lijntje krijgt de kleur van de zwaarste status die op dat moment te zien is:
 wijnrood bij een storing, amber als een pagina onbereikbaar is, en anders de
 accentkleur. Zo zie je aan de onderrand al of er iets aan de hand is.

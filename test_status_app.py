@@ -63,6 +63,44 @@ def test_progress_grows_with_the_fraction():
     assert abs(lengte(app.deel_van_pad(pad, 1.0)) - vol) < 1.0
 
 
+def test_perimeter_matches_the_maths():
+    """Vangt een pad dat een verkeerde kant op loopt.
+
+    Een eerdere versie sprong na de rechteronderhoek naar het verkeerde punt,
+    waardoor er een diagonaal door de knop liep. Het pad liep nog wel rond en
+    groeide nog netjes, dus die tests merkten er niets van. De omtrek was
+    echter tien pixels te lang, en dat is hier wel te zien.
+    """
+    x0, y0, x1, y1, r = 1, 1, 111, 35, 5
+    pad = app.afgeronde_rechthoek(x0, y0, x1, y1, r)
+    gemeten = sum(math.dist(pad[i], pad[i + 1]) for i in range(len(pad) - 1))
+    exact = 2 * (x1 - x0 - 2 * r) + 2 * (y1 - y0 - 2 * r) + 2 * math.pi * r
+    # De bogen bestaan uit rechte stukjes, dus iets korter dan de echte cirkel.
+    assert abs(gemeten - exact) < 0.5, f"omtrek {gemeten:.2f} hoort {exact:.2f} te zijn"
+
+
+def test_every_point_lies_on_the_outline():
+    """Elk punt hoort op de rand te liggen, niet ergens binnenin."""
+    x0, y0, x1, y1, r = 1, 1, 111, 35, 5
+    middelpunten = [(x0 + r, y0 + r), (x1 - r, y0 + r),
+                    (x0 + r, y1 - r), (x1 - r, y1 - r)]
+    for x, y in app.afgeronde_rechthoek(x0, y0, x1, y1, r):
+        assert x0 - 0.01 <= x <= x1 + 0.01 and y0 - 0.01 <= y <= y1 + 0.01, \
+            f"punt ({x:.1f}, {y:.1f}) ligt buiten de knop"
+        op_rechte = (abs(x - x0) < 0.01 or abs(x - x1) < 0.01
+                     or abs(y - y0) < 0.01 or abs(y - y1) < 0.01)
+        op_boog = any(abs(math.dist((x, y), m) - r) < 0.01 for m in middelpunten)
+        assert op_rechte or op_boog, f"punt ({x:.1f}, {y:.1f}) ligt niet op de rand"
+
+
+def test_no_segment_cuts_across_the_button():
+    """Geen enkel segment mag langer zijn dan de langste rechte zijde."""
+    x0, y0, x1, y1, r = 1, 1, 111, 35, 5
+    pad = app.afgeronde_rechthoek(x0, y0, x1, y1, r)
+    langste = max(math.dist(pad[i], pad[i + 1]) for i in range(len(pad) - 1))
+    assert langste <= (x1 - x0 - 2 * r) + 0.01, f"segment van {langste:.1f} is een diagonaal"
+
+
 def test_progress_is_clamped():
     # Waarden buiten 0..1 mogen niet tot een rare lijn leiden. Let op: het pad
     # loopt rond, dus het laatste punt valt samen met het eerste en wordt bij
@@ -82,6 +120,57 @@ def test_font_picks_the_first_available():
 
 def test_font_falls_back_when_nothing_matches():
     assert app.kies_lettertype(["Bestaat Niet"], "val", beschikbaar=set()) == "val"
+
+
+# --- Knipperen van het taakbalkicoon -----------------------------------------
+def test_no_flashing_when_everything_is_fine():
+    vorige = {"a": "ok", "b": "ok"}
+    nieuwe = {"a": "ok", "b": "ok"}
+    assert not app.moet_knipperen(vorige, nieuwe)
+    assert app.alles_in_orde(nieuwe.values())
+
+
+def test_flashing_when_a_problem_appears():
+    for probleem in ("incident", "error", "maintenance", "unknown"):
+        vorige = {"a": "ok", "b": "ok"}
+        nieuwe = {"a": "ok", "b": probleem}
+        assert app.moet_knipperen(vorige, nieuwe), f"{probleem} hoort te knipperen"
+        assert not app.alles_in_orde(nieuwe.values())
+
+
+def test_no_repeat_flashing_for_a_known_problem():
+    # Een storing die al bestond, hoort niet elke ronde opnieuw te knipperen.
+    vorige = {"a": "ok", "b": "incident"}
+    nieuwe = {"a": "ok", "b": "incident"}
+    assert not app.moet_knipperen(vorige, nieuwe)
+
+
+def test_flashing_when_a_problem_changes_kind():
+    vorige = {"a": "maintenance"}
+    nieuwe = {"a": "incident"}
+    assert app.moet_knipperen(vorige, nieuwe)
+
+
+def test_flashing_on_the_very_first_round():
+    # Bij de eerste ronde is er nog geen vorige stand; een probleem moet dan
+    # wel degelijk opvallen.
+    assert app.moet_knipperen({}, {"a": "incident"})
+    assert not app.moet_knipperen({}, {"a": "ok"})
+
+
+def test_recovery_stops_the_flashing():
+    vorige = {"a": "incident"}
+    nieuwe = {"a": "ok"}
+    assert not app.moet_knipperen(vorige, nieuwe)
+    assert app.alles_in_orde(nieuwe.values())
+
+
+def test_flashing_is_a_no_op_off_windows():
+    # Buiten Windows mag de aanroep niets doen en zeker niet klappen.
+    app_object = object.__new__(app.StatusApp)
+    if sys.platform != "win32":
+        app_object._knipper(True)   # mag geen fout geven
+        app_object._knipper(False)
 
 
 # --- Volledigheid ------------------------------------------------------------
