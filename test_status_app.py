@@ -19,6 +19,13 @@ for naam in ("tkinter", "tkinter.font"):
 sys.modules["tkinter"].font = sys.modules["tkinter.font"]
 sys.modules["tkinter"].Canvas = object  # RefreshKnop erft hiervan
 
+# pystray en Pillow zijn optioneel; de app hoort ook zonder te werken.
+for naam in ("pystray", "PIL", "PIL.Image"):
+    module = types.ModuleType(naam)
+    module.__getattr__ = lambda _n: MagicMock()  # type: ignore[attr-defined]
+    sys.modules.setdefault(naam, module)
+sys.modules["PIL"].Image = sys.modules["PIL.Image"]
+
 import check_status
 import status_app as app
 
@@ -171,6 +178,55 @@ def test_flashing_is_a_no_op_off_windows():
     if sys.platform != "win32":
         app_object._knipper(True)   # mag geen fout geven
         app_object._knipper(False)
+
+
+# --- Systeemvak --------------------------------------------------------------
+def test_tray_shows_the_worst_status():
+    assert app.ergste(["ok", "ok", "ok"]) == "ok"
+    assert app.ergste(["ok", "maintenance"]) == "maintenance"
+    assert app.ergste(["maintenance", "incident"]) == "incident"
+    assert app.ergste(["unknown", "error", "maintenance"]) == "error"
+    assert app.ergste([]) == "ok"
+
+
+def test_every_status_has_a_tray_colour():
+    for status in list(app.LABEL) + ["checking"]:
+        assert status in app.TRAY_KLEUR, f"geen systeemvakkleur voor {status}"
+
+
+def test_tray_colours_are_visible_on_a_taskbar():
+    """De accentkleur is te donker voor het systeemvak en hoort opgelicht te zijn.
+
+    Op een donkere taakbalk haalt #791F65 maar 1,7:1. Grafische elementen
+    hebben 3:1 nodig om herkenbaar te zijn.
+    """
+    def helderheid(hex_kleur):
+        r, g, b = (int(hex_kleur[i:i + 2], 16) / 255 for i in (1, 3, 5))
+        f = lambda c: c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+        r, g, b = f(r), f(g), f(b)
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+    def contrast(a, b):
+        la, lb = sorted((helderheid(a), helderheid(b)), reverse=True)
+        return (la + 0.05) / (lb + 0.05)
+
+    donkere_taakbalk = "#202020"
+    for status in ("ok", "incident", "maintenance", "error"):
+        kleur = app.TRAY_KLEUR[status]
+        assert contrast(kleur, donkere_taakbalk) >= 3.0, \
+            f"{status} ({kleur}) haalt maar {contrast(kleur, donkere_taakbalk):.1f}:1"
+
+    assert app.TRAY_KLEUR["ok"] != app.ACCENT, "de accentkleur hoort opgelicht te zijn"
+
+
+def test_tray_tooltip_wording():
+    assert app.tray_tekst({"A": "ok", "B": "ok"}).endswith("alles in orde")
+
+    een = app.tray_tekst({"A": "ok", "B": "incident"})
+    assert "storing" in een.lower() and "B" in een
+
+    meer = app.tray_tekst({"A": "incident", "B": "maintenance", "C": "ok"})
+    assert "2 diensten" in meer
 
 
 # --- Volledigheid ------------------------------------------------------------

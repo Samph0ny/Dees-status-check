@@ -32,6 +32,13 @@ except ImportError:  # pragma: no cover - alleen op systemen zonder tkinter
     )
     raise SystemExit(1)
 
+try:
+    import pystray
+    from PIL import Image
+    TRAY_BESCHIKBAAR = True
+except ImportError:  # zonder deze pakketten draait de app gewoon zonder systeemvak
+    TRAY_BESCHIKBAAR = False
+
 from check_status import load_sites, check_site
 
 
@@ -88,6 +95,47 @@ TEKST_IN_ORDE = "Geen actuele storingen"
 # Van zwaar naar licht. De ring neemt de kleur van de zwaarste status die
 # voorkomt; alles vanaf 'maintenance' valt terug op de accentkleur.
 ERNST = ["incident", "error"]
+
+
+# Het icoon in het systeemvak is maar 16 bij 16 pixels en staat op de taakbalk,
+# niet op onze eigen donkere achtergrond. De accentkleur is daar te donker voor
+# (1,7:1 op een donkere taakbalk), dus die wordt lichter gemaakt. De andere
+# kleuren zijn licht bijgesteld zodat ze op een donkere en een lichte taakbalk
+# allebei minstens 3:1 halen.
+TRAY_KLEUR = {
+    "ok": "#C232A2",           # accent, opgelicht
+    "incident": "#C95168",     # wijnrood, opgelicht
+    "maintenance": "#8A6E9B",  # pruim
+    "error": "#C08A4A",        # amber
+    "unknown": "#8B8188",
+    "checking": "#6E656B",
+}
+
+# Van zwaarst naar lichtst: het systeemvak toont de ernstigste status.
+VOLGORDE = ["incident", "error", "maintenance", "unknown", "checking", "ok"]
+
+
+def ergste(statussen) -> str:
+    """Geeft de zwaarste status uit een verzameling."""
+    aanwezig = set(statussen)
+    for status in VOLGORDE:
+        if status in aanwezig:
+            return status
+    return "ok"
+
+
+def tray_tekst(per_dienst: dict) -> str:
+    """Maakt de tekst die verschijnt als je over het systeemvak-icoon zweeft.
+
+    per_dienst is {naam van de dienst: status}.
+    """
+    problemen = [naam for naam, status in per_dienst.items() if status not in RUSTIG]
+    if not problemen:
+        return "Status Check \u2014 alles in orde"
+    if len(problemen) == 1:
+        naam = problemen[0]
+        return f"Status Check \u2014 {LABEL.get(per_dienst[naam], '?').lower()}: {naam}"
+    return f"Status Check \u2014 {len(problemen)} diensten met een melding"
 
 
 # Statussen die geen aandacht vragen. Alles daarbuiten (storing, onderhoud,
@@ -232,9 +280,87 @@ class StatusApp:
         self.sans = kies_lettertype(
             ["Segoe UI", "Helvetica Neue", "Helvetica", "DejaVu Sans"], "TkDefaultFont")
 
+        self.tray = None
+        self._tray_basis = None
+
         self._bouw_venster()
+        self._bouw_tray()
+        # Het kruisje verbergt het venster; afsluiten gaat via het systeemvak.
+        root.protocol("WM_DELETE_WINDOW", self._verberg)
         self._ververs_nu()
         self.root.after(TICK_MS, self._tik)
+
+    # --- Systeemvak -------------------------------------------------------
+    def _bouw_tray(self) -> None:
+        """Zet het icoon in het systeemvak, naast de klok."""
+        if not TRAY_BESCHIKBAAR:
+            return
+        pad = bestandspad("icon.png")
+        if not pad.exists():
+            return
+        try:
+            self._tray_basis = Image.open(pad).convert("RGBA")
+            menu = pystray.Menu(
+                pystray.MenuItem("Tonen", self._tray_tonen, default=True),
+                pystray.MenuItem("Nu verversen", self._tray_verversen),
+                pystray.Menu.SEPARATOR,
+                pystray.MenuItem("Afsluiten", self._tray_afsluiten),
+            )
+            self.tray = pystray.Icon(
+                "status_check", self._tray_beeld("checking"),
+                "Status Check", menu)
+            threading.Thread(target=self.tray.run, daemon=True).start()
+        except Exception:
+            self.tray = None  # zonder systeemvak werkt de app nog prima
+
+    def _tray_beeld(self, status: str):
+        """Kleurt de vleermuis in de kleur die bij een status hoort."""
+        kleur = TRAY_KLEUR.get(status, TRAY_KLEUR["unknown"])
+        gekleurd = Image.new("RGBA", self._tray_basis.size, kleur)
+        gekleurd.putalpha(self._tray_basis.getchannel("A"))
+        return gekleurd
+
+    def _werk_tray_bij(self) -> None:
+        if not self.tray:
+            return
+        per_dienst = {s["name"]: self.statussen.get(s["id"], "unknown")
+                      for s in self.sites}
+        try:
+            self.tray.icon = self._tray_beeld(ergste(per_dienst.values()))
+            self.tray.title = tray_tekst(per_dienst)
+        except Exception:
+            pass
+
+    # De menu-items draaien in de thread van pystray, dus het werk wordt
+    # teruggegeven aan tkinter met after().
+    def _tray_tonen(self, *_):
+        self.root.after(0, self._toon_venster)
+
+    def _tray_verversen(self, *_):
+        self.root.after(0, self._ververs_nu)
+
+    def _tray_afsluiten(self, *_):
+        self.root.after(0, self._afsluiten)
+
+    def _toon_venster(self) -> None:
+        self.root.deiconify()
+        self.root.lift()
+        self.root.focus_force()
+
+    def _verberg(self) -> None:
+        """Het kruisje verbergt het venster als er een systeemvak-icoon is."""
+        if self.tray:
+            self.root.withdraw()
+        else:
+            self._afsluiten()
+
+    def _afsluiten(self) -> None:
+        if self.tray:
+            try:
+                self.tray.stop()
+            except Exception:
+                pass
+        self.root.destroy()
 
     def _knipper(self, aan: bool) -> None:
         """Laat het taakbalkicoon knipperen (alleen Windows).
@@ -390,6 +516,7 @@ class StatusApp:
                 elif alles_in_orde(self.statussen.values()):
                     self._knipper(False)
                 self.vorige_statussen = dict(self.statussen)
+                self._werk_tray_bij()
                 continue
             self._toon(res)
 

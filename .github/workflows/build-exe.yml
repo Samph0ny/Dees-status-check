@@ -42,7 +42,7 @@ jobs:
         # --windowed: geen zwart terminalvenster erachter
         # --icon:     het icoon van het .exe-bestand zelf
         # --add-data: icon.png meeleveren voor het venstericoon
-        run: pyinstaller --onefile --windowed --name "Status Check" --icon icon.ico --add-data "icon.png;." status_app.py
+        run: pyinstaller --onefile --windowed --name "Status Check" --icon icon.ico --add-data "icon.png;." --hidden-import pystray._win32 status_app.py
 
       - name: sites.json ernaast zetten
         # Zo kun je diensten toevoegen zonder opnieuw te bouwen.
