@@ -10,7 +10,8 @@
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "language": "nl"
+      "language": "nl",
+      "section": "Actuele storingen"
     },
     {
       "id": "lantelcloud",

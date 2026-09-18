@@ -11,6 +11,34 @@ Gecontroleerde diensten:
 | ZorgDomein | https://zorgdomein.com/actuele-storingen/ |
 | Lantel Cloud | https://status.lantelcloud.nl/ |
 
+Er zijn twee manieren om het te gebruiken:
+
+- **De desktop-app** (`status_app.py`) — draait op je eigen computer en ververst zo
+  vaak als je wilt, tot elke 30 seconden. Kost niets.
+- **De automatische controle op GitHub** — draait elk uur vanzelf door en bouwt een
+  geschiedenis op, ook als je computer uit staat.
+
+## De desktop-app
+
+```bash
+pip install -r requirements.txt
+python3 status_app.py
+```
+
+Op Windows kun je `start_app.bat` dubbelklikken, op macOS `start_app.command`.
+
+In de app kies je zelf hoe vaak er ververst wordt (30 seconden tot 1 uur) en kun je
+met "Nu verversen" meteen een controle afdwingen. De controles draaien op de
+achtergrond, dus het venster blijft bruikbaar terwijl er gewacht wordt.
+
+**Waarom niet elke 5 seconden?** De ondergrens is bewust 30 seconden. Vaker is niet
+netjes tegenover de websites die je bevraagt, en statuspagina's veranderen toch
+hooguit een paar keer per dag.
+
+**Als de app niet start met "No module named tkinter":** tkinter hoort standaard bij
+Python op Windows en macOS. Op Linux installeer je het los met
+`sudo apt install python3-tk`.
+
 ## Hoe het werkt (in het kort)
 
 1. **GitHub Actions** start elk uur automatisch een kleine computer in de cloud.
@@ -28,7 +56,10 @@ bestand in deze repository, en GitHub Pages serveert de pagina.
 | --- | --- |
 | `sites.json` | **Dit pas je aan** om diensten toe te voegen of te wijzigen. |
 | `check_status.py` | Haalt de pagina's op en bepaalt de status. |
+| `status_app.py` | De desktop-app. Gebruikt dezelfde logica als hierboven. |
+| `start_app.bat` / `start_app.command` | Dubbelklik-starters voor Windows en macOS. |
 | `test_check_status.py` | Tests voor de herkenningslogica (werkt zonder internet). |
+| `test_status_app.py` | Tests voor de desktop-app (werkt zonder beeldscherm). |
 | `docs/index.html` | Het dashboard dat je in je browser ziet. |
 | `docs/data/status.json` | De laatste meting. Wordt automatisch geschreven. |
 | `docs/data/history.json` | De laatste 240 metingen per dienst (voor het balkje). |
@@ -98,7 +129,8 @@ python3 -m http.server 8000 --directory docs
 
 ## Een dienst toevoegen
 
-Zet er een blokje bij in `sites.json`:
+Zet er een blokje bij in `sites.json`. Zowel de app als de automatische controle
+lezen datzelfde bestand, dus je hoeft het maar op één plek te doen:
 
 ```json
 {
@@ -128,3 +160,16 @@ gebruikt. Voeg die zinsnede toe aan `OK_PHRASES`, `INCIDENT_PHRASES` of
 
 Let op de volgorde: de OK-zinnen worden eerst gecontroleerd, omdat "geen
 storingen" nu eenmaal het woord "storingen" bevat.
+
+## Een pagina met meerdere kopjes
+
+ZorgDomein zet op één pagina een kopje "Actuele storingen" en daaronder een kopje
+"Gepland onderhoud". Zonder onderscheid telt aangekondigd onderhoud mee als
+actuele storing. Daarvoor is het veld `section` in `sites.json`:
+
+```json
+"section": "Actuele storingen"
+```
+
+Het script leest dan alleen de tekst die onder dat kopje staat, tot aan het
+volgende kopje.
