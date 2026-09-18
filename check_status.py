@@ -71,6 +71,17 @@ MAINTENANCE_PHRASES = [
     "maintenance in progress",
 ]
 
+# --- Ruis die we weggooien voor we de tekst lezen ------------------------------
+# Menu's, footers en cookiebalken bevatten vaak woorden als "storingen" (bv. een
+# menu-item "Actuele storingen"). Die zeggen niets over de huidige status, dus
+# ze worden verwijderd voordat we gaan zoeken.
+NOISE_TAGS = ["script", "style", "noscript", "svg", "iframe", "nav", "header",
+              "footer", "aside", "form"]
+NOISE_ATTR = re.compile(
+    r"(nav|menu|breadcrumb|cookie|consent|sidebar|skip-link|site-footer|site-header)",
+    re.IGNORECASE,
+)
+
 # Atlassian Statuspage vertaalt zijn eigen indicator al naar deze woorden.
 STATUSPAGE_INDICATOR = {
     "none": OK,
@@ -116,7 +127,27 @@ def parse_json_payload(flavour: str, payload: dict) -> dict | None:
     if not isinstance(payload, dict):
         return None
 
-    # Atlassian Statuspage en Instatus delen grotendeels hetzelfde formaat.
+    # Instatus heeft een eigen formaat met activeIncidents / activeMaintenances.
+    if "activeIncidents" in payload or "activeMaintenances" in payload:
+        incidents = [i.get("name", "") for i in (payload.get("activeIncidents") or [])
+                     if isinstance(i, dict)]
+        maintenances = [m.get("name", "") for m in (payload.get("activeMaintenances") or [])
+                        if isinstance(m, dict)]
+        if incidents:
+            status, detail = INCIDENT, incidents[0]
+        elif maintenances:
+            status, detail = MAINTENANCE, maintenances[0]
+        else:
+            status, detail = OK, "Geen actieve incidenten gemeld"
+        return {
+            "status": status,
+            "detail": detail,
+            "components": [],
+            "open_incidents": incidents[:5],
+            "method": "json:instatus",
+        }
+
+    # Atlassian Statuspage: de status zit in een object met een indicator.
     page_status = payload.get("status")
     if isinstance(page_status, dict):
         indicator = str(page_status.get("indicator", "")).lower()
@@ -155,11 +186,42 @@ def parse_json_payload(flavour: str, payload: dict) -> dict | None:
 
 
 def page_text(html: str) -> str:
+    """Haalt de leesbare inhoud uit de pagina, zonder menu's en footers."""
     soup = BeautifulSoup(html, "html.parser")
-    for tag in soup(["script", "style", "noscript", "svg"]):
+
+    for tag in soup(NOISE_TAGS):
         tag.decompose()
-    text = soup.get_text(separator=" ")
+
+    # Ook elementen weggooien die aan hun class of id te herkennen zijn als menu.
+    for tag in soup.find_all(attrs={"class": True}):
+        if getattr(tag, "decomposed", False):
+            continue
+        if NOISE_ATTR.search(" ".join(tag.get("class") or [])):
+            tag.decompose()
+    for tag in soup.find_all(attrs={"id": True}):
+        if getattr(tag, "decomposed", False):
+            continue
+        if NOISE_ATTR.search(tag.get("id") or ""):
+            tag.decompose()
+
+    # Staat er een duidelijk inhoudsgebied? Gebruik dan alleen dat.
+    region = soup.find("main") or soup.find(attrs={"role": "main"}) or soup.find("article")
+    if region is None or len(region.get_text(strip=True)) < 80:
+        region = soup
+
+    text = region.get_text(separator=" ")
     return re.sub(r"\s+", " ", text).strip()
+
+
+def context_around(text: str, phrase: str, width: int = 120) -> str:
+    """Geeft de tekst rondom een gevonden zinsnede, om te kunnen controleren of
+    het echt om een statusmelding gaat en niet om bijvoorbeeld een menu-item."""
+    pos = text.lower().find(phrase)
+    if pos < 0:
+        return ""
+    start = max(0, pos - width)
+    end = min(len(text), pos + len(phrase) + width)
+    return ("\u2026" if start else "") + text[start:end] + ("\u2026" if end < len(text) else "")
 
 
 def classify_text(text: str) -> tuple[str, str]:
@@ -190,6 +252,7 @@ def check_site(site: dict) -> dict:
         "open_incidents": [],
         "method": "",
         "http_status": None,
+        "match_context": "",
         "excerpt": "",
     }
 
@@ -216,8 +279,11 @@ def check_site(site: dict) -> dict:
     result["detail"] = f"Gevonden op de pagina: “{phrase}”" if phrase else (
         "Geen bekende signaalwoorden gevonden — controleer de pagina zelf."
     )
+    # De omliggende tekst laat zien of het om een echte melding gaat of om,
+    # bijvoorbeeld, een menu-item dat toevallig hetzelfde woord bevat.
+    result["match_context"] = context_around(text, phrase) if phrase else ""
     # Dit fragment helpt bij het bijstellen van de signaalwoorden.
-    result["excerpt"] = text[:400]
+    result["excerpt"] = text[:1500]
     return result
 
 
@@ -255,8 +321,10 @@ def main() -> int:
 
     for res in results:
         print(f"{res['status'].upper():<11} {res['name']:<22} ({res['method'] or 'n/a'}) {res['detail']}")
-        if res["excerpt"]:
-            print(f"            fragment: {res['excerpt'][:160]}")
+        if res.get("match_context"):
+            print(f"            context:  {res['match_context']}")
+        elif res["excerpt"]:
+            print(f"            fragment: {res['excerpt'][:200]}")
 
     return 0
 

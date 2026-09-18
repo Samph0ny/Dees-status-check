@@ -46,6 +46,10 @@ Het script probeert twee methodes, in deze volgorde:
    tekst nagelezen op signaalwoorden zoals "geen storingen", "actuele storing",
    "gepland onderhoud", "major outage".
 
+   Menu's, headers, footers en cookiebalken worden eerst weggegooid. Dat is nodig:
+   het menu van ZorgDomein bevat het item "Actuele storingen", en zonder filtering
+   werd dat gelezen als een echte storing.
+
 Mogelijke uitkomsten:
 
 | Status | Betekenis |
@@ -104,8 +108,10 @@ Commit en push — de volgende controle neemt hem mee.
 ## Als een dienst `unknown` blijft
 
 Dan herkent het script de woorden op die pagina nog niet. In
-`docs/data/status.json` staat per dienst een veld `excerpt`: de eerste 400 tekens
-van de pagina zoals het script die leest. Daar zie je welke bewoording de site
+`docs/data/status.json` staan per dienst twee hulpvelden: `excerpt` (de eerste
+1500 tekens zoals het script de pagina leest, dus na het weggooien van menu's) en
+`match_context` (de tekst rondom de gevonden zinsnede, zodat je kunt zien of het
+om een echte melding gaat). Daar zie je welke bewoording de site
 gebruikt. Voeg die zinsnede toe aan `OK_PHRASES`, `INCIDENT_PHRASES` of
 `MAINTENANCE_PHRASES` bovenin `check_status.py`.
 
