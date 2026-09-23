@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-23T07:17:52+00:00",
+  "generated_at": "2026-09-23T08:17:55+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-09-23T07:17:35+00:00",
+      "checked_at": "2026-09-23T08:17:37+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “no current disturbances”",
       "components": [],
@@ -15,7 +15,7 @@
       "text_lengths": {
         "strict": 125,
         "mild": 198,
-        "raw": 3083
+        "raw": 3157
       },
       "match_context": "Service Status Current service information Press the “+” to expand and view the ongoing disturbances. No current disturbances",
       "excerpt": "Service Status Current service information Press the “+” to expand and view the ongoing disturbances. No current disturbances"
@@ -24,7 +24,7 @@
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-09-23T07:17:37+00:00",
+      "checked_at": "2026-09-23T08:17:39+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “werken naar behoren”",
       "components": [],
@@ -33,17 +33,17 @@
       "http_status": 200,
       "text_lengths": {
         "strict": 34,
-        "mild": 1109,
-        "raw": 8951
+        "mild": 958,
+        "raw": 8800
       },
-      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen ZorgDomein en Boards werken naar behoren. Gepland onderhoud Onderhoud van het Boards platform Op woensdag 23 september is Boards tot 8:30 uur offline. Er is alt…",
-      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen ZorgDomein en Boards werken naar behoren. Gepland onderhoud Onderhoud van het Boards platform Op woensdag 23 september is Boards tot 8:30 uur offline. Er is altijd een kans dat de werkzaamheden uitlopen waardoor Boards vanaf 08.30 uur nog niet online is. Storing melden? Klik hier om contact op te nemen met onze Support. Buiten kantooruren krijg je een externe supportmedewerker aan de lijn. Bij meerdere meldingen van een ernstige verstoring zal er zo snel mogelijk contact met ons worden opgenomen. × Vraag een Boards demo aan × $ Inloggen op ZorgDomein $ Inloggen op Boards × Aanvraag ZorgDomein Ben je een zorgprofessional en wil je je organisatie aanmelden op ZorgDomein? Vul dan onderstaand formulier in en wij nemen contact met je op. \" * \" geeft vereiste velden aan × Aanvraag ZorgDomein (bij meer dan 25 zorgverleners) Heeft jouw praktijk meer dan 25 zorgverleners en wil je meer weten over de kosten van ZorgDomein? Vul dan onderstaand formulier in en dan nemen wij contact met je op. \" * \" geeft vereiste velden aan"
+      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen ZorgDomein en Boards werken naar behoren. Gepland onderhoud Er is op dit moment geen onderhoud gepland. Storing melden? Klik hier om contact op te nemen met onz…",
+      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen ZorgDomein en Boards werken naar behoren. Gepland onderhoud Er is op dit moment geen onderhoud gepland. Storing melden? Klik hier om contact op te nemen met onze Support. Buiten kantooruren krijg je een externe supportmedewerker aan de lijn. Bij meerdere meldingen van een ernstige verstoring zal er zo snel mogelijk contact met ons worden opgenomen. × Vraag een Boards demo aan × $ Inloggen op ZorgDomein $ Inloggen op Boards × Aanvraag ZorgDomein Ben je een zorgprofessional en wil je je organisatie aanmelden op ZorgDomein? Vul dan onderstaand formulier in en wij nemen contact met je op. \" * \" geeft vereiste velden aan × Aanvraag ZorgDomein (bij meer dan 25 zorgverleners) Heeft jouw praktijk meer dan 25 zorgverleners en wil je meer weten over de kosten van ZorgDomein? Vul dan onderstaand formulier in en dan nemen wij contact met je op. \" * \" geeft vereiste velden aan"
     },
     {
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-09-23T07:17:49+00:00",
+      "checked_at": "2026-09-23T08:17:52+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “alle systemen operationeel”",
       "components": [],
