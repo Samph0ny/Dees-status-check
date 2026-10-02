@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-02T06:23:27+00:00",
+  "generated_at": "2026-10-02T07:19:47+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-10-02T06:22:45+00:00",
+      "checked_at": "2026-10-02T07:19:19+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “no current disturbances”",
       "components": [],
@@ -24,7 +24,7 @@
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-10-02T06:22:48+00:00",
+      "checked_at": "2026-10-02T07:19:22+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “werken naar behoren”",
       "components": [],
@@ -43,7 +43,7 @@
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-10-02T06:23:23+00:00",
+      "checked_at": "2026-10-02T07:19:44+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “alle systemen operationeel”",
       "components": [],
