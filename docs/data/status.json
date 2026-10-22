@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-22T04:29:32+00:00",
+  "generated_at": "2026-10-22T09:59:44+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-10-22T04:29:17+00:00",
+      "checked_at": "2026-10-22T09:59:27+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “no current disturbances”",
       "components": [],
@@ -24,7 +24,7 @@
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-10-22T04:29:19+00:00",
+      "checked_at": "2026-10-22T09:59:29+00:00",
       "status": "incident",
       "detail": "Gevonden op de pagina: “actuele storing”",
       "components": [],
@@ -33,17 +33,17 @@
       "http_status": 200,
       "text_lengths": {
         "strict": 34,
-        "mild": 2117,
-        "raw": 9959
+        "mild": 2434,
+        "raw": 10276
       },
-      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Woensdag 21 oktober, 12:30 Storing: beperkt gebruik van ZorgDomein vanuit HealthConnected Vandaag is een ernstig beve…",
-      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Woensdag 21 oktober, 12:30 Storing: beperkt gebruik van ZorgDomein vanuit HealthConnected Vandaag is een ernstig beveiligingsrisico bekendgemaakt in de programmeertaal PHP, die wereldwijd door veel websites wordt gebruikt. HealthConnected heeft hierop uit voorzorg bepaalde koppelingen uitgeschakeld. Voor HIS-gebruikers is de koppeling (SSO) tussen HealthConnected en ZorgDomein/Boards hierdoor offline. Het is op dit moment niet mogelijk om verwijzingen te doen of gegevens op te halen of te versturen via deze koppeling. Onze teams houden de ontwikkelingen nauwlettend in de gaten en we informeren u zodra er meer bekend is. Onze excuses voor het ongemak. Woensdag 21 oktober, 12:55 ZorgDomein niet getroffen door PHP-lek Het ZorgDomein Verwijsplatform en Boards maken zelf geen gebruik van PHP en zijn daarmee niet getroffen door het wereldwijde beveiligingsrisico in deze programmeertaal. Woensdag 21 oktober, 16:55 Koppeling tussen ZorgDomein/Boards en HealthConnected nog offline Op dit moment is de koppeling (SSO) tussen HealthConnected en ZorgDomein/Boards nog offline. De teams van HealthConnected werken er momenteel hard aan om de koppeling zo snel en veilig mogelijk weer online te krijgen. Gepland onderhoud Er is momenteel geen onderhoud gepland. Storing melden? Klik hier om contact op te nemen met onze Support. Buiten kantooruren krijg je een externe supportmedewerker aan de lijn. Bij meerdere meld"
+      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Donderdag 22 oktober, 08:30 Koppeling tussen ZorgDomein/Boards en HealthConnected weer operationeel. Gisterenavond is…",
+      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Donderdag 22 oktober, 08:30 Koppeling tussen ZorgDomein/Boards en HealthConnected weer operationeel. Gisterenavond is de koppeling (SSO) tussen HealthConnected en ZorgDomein/Boards door de teams van HealthConnected volledig geüpdatet en veilig online gebracht. Alle functionaliteiten werken weer zoals u gewend bent. Woensdag 21 oktober, 12:30 Storing: beperkt gebruik van ZorgDomein vanuit HealthConnected Vandaag is een ernstig beveiligingsrisico bekendgemaakt in de programmeertaal PHP, die wereldwijd door veel websites wordt gebruikt. HealthConnected heeft hierop uit voorzorg bepaalde koppelingen uitgeschakeld. Voor HIS-gebruikers is de koppeling (SSO) tussen HealthConnected en ZorgDomein/Boards hierdoor offline. Het is op dit moment niet mogelijk om verwijzingen te doen of gegevens op te halen of te versturen via deze koppeling. Onze teams houden de ontwikkelingen nauwlettend in de gaten en we informeren u zodra er meer bekend is. Onze excuses voor het ongemak. Woensdag 21 oktober, 12:55 ZorgDomein niet getroffen door PHP-lek Het ZorgDomein Verwijsplatform en Boards maken zelf geen gebruik van PHP en zijn daarmee niet getroffen door het wereldwijde beveiligingsrisico in deze programmeertaal. Woensdag 21 oktober, 16:55 Koppeling tussen ZorgDomein/Boards en HealthConnected nog offline Op dit moment is de koppeling (SSO) tussen HealthConnected en ZorgDomein/Boards nog offline. De teams van HealthCo"
     },
     {
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-10-22T04:29:30+00:00",
+      "checked_at": "2026-10-22T09:59:41+00:00",
       "status": "incident",
       "detail": "Gevonden op de pagina: “verstoring”",
       "components": [],
@@ -51,12 +51,12 @@
       "method": "text:strict",
       "http_status": 200,
       "text_lengths": {
-        "strict": 6158,
-        "mild": 6158,
-        "raw": 6183
+        "strict": 7088,
+        "mild": 7088,
+        "raw": 7113
       },
       "match_context": "…tus Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat he…",
-      "excerpt": "LanTel Cloud Status Systemen niet operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat het ons weten! Open incidenten Algemene storing Geïdentificeerd | 21.10.2026 | 21:16 GMT+02:00 Storing Enreach Applicaties Op dit moment ervaart Enreach een landelijke verstoring als gevolg van preventieve beveiligingsmaatregelen. Hierdoor zijn diverse applicaties en beheeromgevingen niet of beperkt beschikbaar. Momenteel bekende impact: -Operator is niet beschikbaar. -Enreach Contact Desktop en Mobile Apps zijn beperkt beschikbaar. -Voicemails zijn niet beschikbaar. -Audio-opnames (Shomi) kunnen niet worden afgespeeld. -Persoonlijke contacten kunnen niet worden toegevoegd of gewijzigd. -Nummerplanbeheer is niet beschikbaar. -Het Reporting Portal is niet toegankelijk. -Inloggen via Microsoft SSO werkt niet. -De Enreach Contact Teams-applicatie is niet beschikbaar. -CRM- en ERP-integraties zijn niet beschikbaar. -Het Partner Portal en andere webdiensten kunnen beperkt functioneren. -LanTel Wiki Vooralsnog lijkt de telefoniedienst zelf grotendeels operationeel te blijven, maar gebruikers kunnen hinder ondervinden van bovengenoemde functies. Enreach heeft aangegeven de getroffen diensten pas weer beschikbaar te stellen zodra de benodigde beveiligingsmaatregelen z"
+      "excerpt": "LanTel Cloud Status Systemen niet operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat het ons weten! Open incidenten Storing Lantel Wiki Geïdentificeerd | 22.10.2026 | 09:00 GMT+02:00 Op dit moment is de Lantel Wiki tijdelijk niet bereikbaar als gevolg van een onderliggende PHP-storing. Onze technische afdeling heeft het probleem in onderzoek en werkt aan een oplossing. Deze storing heeft uitsluitend invloed op de bereikbaarheid van de Wiki. Overige diensten functioneren zoals verwacht. Onze excuses voor het ongemak. Zodra de storing is verholpen en de Wiki weer beschikbaar is, plaatsen wij direct een nieuwe update op deze statuspagina. Betrokken onderdelen LanTel Service: LanTel Wiki Onderhoud Geen onderhoud gemeld. Onderdelen LanTel Connect Operationeel LanTel Hosted Operationeel LanTel Hosted Blue Operationeel LanTel Hosted Move Operationeel LanTel Hosted Teams OC ? Operationeel LanTel Hosted Wave Operationeel Fax Diensten ? Operationeel Add-on - Aurora TeleQ Operationeel Add-on - CTI ? Operationeel Add-on - Hosted Teams Attendant Console Operationeel Add-on - Hosted Teams Contact Center Operationeel Add-on - Microsoft Teams bellen DR ? Operationeel LanTel Mobile Operationeel LanTel Service Operationeel LanTel Wiki Ernstige storing LanTel SI"
     }
   ]
 }
