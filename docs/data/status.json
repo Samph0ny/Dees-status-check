@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-26T05:57:03+00:00",
+  "generated_at": "2026-10-26T12:46:46+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-10-26T05:56:48+00:00",
+      "checked_at": "2026-10-26T12:46:31+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “no current disturbances”",
       "components": [],
@@ -24,7 +24,7 @@
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-10-26T05:56:50+00:00",
+      "checked_at": "2026-10-26T12:46:33+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “werken naar behoren”",
       "components": [],
@@ -43,7 +43,7 @@
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-10-26T05:57:00+00:00",
+      "checked_at": "2026-10-26T12:46:43+00:00",
       "status": "incident",
       "detail": "Gevonden op de pagina: “verstoring”",
       "components": [],
@@ -51,9 +51,9 @@
       "method": "text:strict",
       "http_status": 200,
       "text_lengths": {
-        "strict": 7088,
-        "mild": 7088,
-        "raw": 7113
+        "strict": 8270,
+        "mild": 8270,
+        "raw": 8295
       },
       "match_context": "…tus Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat he…",
       "excerpt": "LanTel Cloud Status Systemen niet operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat het ons weten! Open incidenten Storing Lantel Wiki Geïdentificeerd | 22.10.2026 | 09:00 GMT+02:00 Op dit moment is de Lantel Wiki tijdelijk niet bereikbaar als gevolg van een onderliggende PHP-storing. Onze technische afdeling heeft het probleem in onderzoek en werkt aan een oplossing. Deze storing heeft uitsluitend invloed op de bereikbaarheid van de Wiki. Overige diensten functioneren zoals verwacht. Onze excuses voor het ongemak. Zodra de storing is verholpen en de Wiki weer beschikbaar is, plaatsen wij direct een nieuwe update op deze statuspagina. Betrokken onderdelen LanTel Service: LanTel Wiki Onderhoud Geen onderhoud gemeld. Onderdelen LanTel Connect Operationeel LanTel Hosted Operationeel LanTel Hosted Blue Operationeel LanTel Hosted Move Operationeel LanTel Hosted Teams OC ? Operationeel LanTel Hosted Wave Operationeel Fax Diensten ? Operationeel Add-on - Aurora TeleQ Operationeel Add-on - CTI ? Operationeel Add-on - Hosted Teams Attendant Console Operationeel Add-on - Hosted Teams Contact Center Operationeel Add-on - Microsoft Teams bellen DR ? Operationeel LanTel Mobile Operationeel LanTel Service Operationeel LanTel Wiki Ernstige storing LanTel SI"
