@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-04T01:11:11+00:00",
+  "generated_at": "2026-11-04T08:55:56+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-11-04T01:10:55+00:00",
+      "checked_at": "2026-11-04T08:55:10+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “no current disturbances”",
       "components": [],
@@ -24,7 +24,7 @@
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-11-04T01:10:57+00:00",
+      "checked_at": "2026-11-04T08:55:12+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “werken naar behoren”",
       "components": [],
@@ -43,20 +43,20 @@
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-11-04T01:11:08+00:00",
-      "status": "incident",
-      "detail": "Gevonden op de pagina: “verstoring”",
+      "checked_at": "2026-11-04T08:55:53+00:00",
+      "status": "ok",
+      "detail": "Gevonden op de pagina: “alle systemen operationeel”",
       "components": [],
       "open_incidents": [],
       "method": "text:strict",
       "http_status": 200,
       "text_lengths": {
-        "strict": 6944,
-        "mild": 6944,
-        "raw": 6969
+        "strict": 6047,
+        "mild": 6047,
+        "raw": 6072
       },
-      "match_context": "…tus Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat he…",
-      "excerpt": "LanTel Cloud Status Systemen niet operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat het ons weten! Let op: De LanTel Wiki is verhuisd! wiki.lantel.nl wordt niet meer gebruikt en onze documentatie is voortaan te vinden op docs.lantel.nl Open incidenten Algemene storing Onderzoeken | 03.11.2026 | 08:00 GMT+01:00 Momenteel krijgen wij meerdere meldingen over problemen die ervaren worden met de telefonische bereikbaarheid of diensten. Deze meldingen worden onderzocht, wij zullen u via deze weg op de hoogte houden. Betrokken onderdelen LanTel Hosted: LanTel Hosted Move Onderhoud Geen onderhoud gemeld. Onderdelen LanTel Connect Operationeel LanTel Hosted Operationeel LanTel Hosted Blue Operationeel LanTel Hosted Move Ernstige storing LanTel Hosted Teams OC ? Operationeel LanTel Hosted Wave Operationeel Fax Diensten ? Operationeel Add-on - Aurora TeleQ Operationeel Add-on - CTI ? Operationeel Add-on - Hosted Teams Attendant Console Operationeel Add-on - Hosted Teams Contact Center Operationeel Add-on - Microsoft Teams bellen DR ? Operationeel LanTel Mobile Operationeel LanTel Service Operationeel LanTel Wiki Operationeel LanTel SIP Operationeel Via Operator Connect E-Fax, Faxen over IP Integratie met HIS/CRM applicaties Bellen met Microsoft Teams vi"
+      "match_context": "LanTel Cloud Status Alle systemen operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte ge…",
+      "excerpt": "LanTel Cloud Status Alle systemen operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat het ons weten! Let op: De LanTel Wiki is verhuisd! wiki.lantel.nl wordt niet meer gebruikt en onze documentatie is voortaan te vinden op docs.lantel.nl Onderhoud Geen onderhoud gemeld. Onderdelen LanTel Connect Operationeel LanTel Hosted Operationeel LanTel Hosted Blue Operationeel LanTel Hosted Move Operationeel LanTel Hosted Teams OC ? Operationeel LanTel Hosted Wave Operationeel Fax Diensten ? Operationeel Add-on - Aurora TeleQ Operationeel Add-on - CTI ? Operationeel Add-on - Hosted Teams Attendant Console Operationeel Add-on - Hosted Teams Contact Center Operationeel Add-on - Microsoft Teams bellen DR ? Operationeel LanTel Mobile Operationeel LanTel Service Operationeel LanTel Wiki Operationeel LanTel SIP Operationeel Via Operator Connect E-Fax, Faxen over IP Integratie met HIS/CRM applicaties Bellen met Microsoft Teams via LanTel Hosted Wave/Move/Flow. Direct Routing Incident geschiedenis Algemene storing Gesloten | 03.11.2026 | 10:00 GMT+01:00 Momenteel krijgen wij meerdere meldingen over problemen die ervaren worden met de telefonische bereikbaarheid of diensten. Deze meldingen worden onderzocht, wij zullen u via deze weg op de hoogte houden. Storing L"
     }
   ]
 }
