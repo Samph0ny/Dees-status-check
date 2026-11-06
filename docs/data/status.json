@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-06T10:40:50+00:00",
+  "generated_at": "2026-11-06T17:52:57+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-11-06T10:40:34+00:00",
+      "checked_at": "2026-11-06T17:52:41+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “no current disturbances”",
       "components": [],
@@ -24,7 +24,7 @@
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-11-06T10:40:36+00:00",
+      "checked_at": "2026-11-06T17:52:43+00:00",
       "status": "incident",
       "detail": "Gevonden op de pagina: “actuele storing”",
       "components": [],
@@ -33,17 +33,17 @@
       "http_status": 200,
       "text_lengths": {
         "strict": 34,
-        "mild": 2419,
-        "raw": 10297
+        "mild": 2130,
+        "raw": 10008
       },
-      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Update 6 november 2026 11:25 uur Het herstel vordert; steeds meer HIS-koppelingen werken weer naar behoren. We monito…",
-      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Update 6 november 2026 11:25 uur Het herstel vordert; steeds meer HIS-koppelingen werken weer naar behoren. We monitoren de situatie nauwlettend. Vrijdag 6 november 2026, 09:50 uur Storing: patiëntgegevens komen bij sommige koppelingen niet door Vanochtend hebben wij een certificaat vervangen. Een certificaatwissel vraagt ook actie bij gekoppelde partners: zij moeten het nieuwe certificaat aan hun kant activeren. Bij een deel van de partners is dat nog niet gebeurd. Wat merkt u hiervan? Bij de getroffen koppelingen worden gegevens niet doorgezet naar ZorgDomein. Verwijzers zien bijvoorbeeld dat patiëntgegevens niet worden meegeschreven naar de ZorgDomein-applicatie. Gebruikers kunnen problemen ervaren bij het inloggen vanuit het HIS. Wat doen wij? We zijn in nauw contact met de getroffen partijen. We begeleiden hen bij het activeren van het nieuwe certificaat en werken met alle capaciteit aan herstel. Zodra de koppelingen weer werken, melden we dat hier. Gepland onderhoud Datum & tijd: Vrijdag 6 november 2026, 09:00 uur Verwachte impact: Minimale vertraging in de berichtverwerking (enkele minuten) Op vrijdag 6 november om 09:00 uur voeren wij een beveiligingsupdate uit. Hierbij vernieuwen we een digitaal beveiligingscertificaat. Wat betekent dit voor jou? Gebruikers kunnen een korte onderbreking van onze dienstverlening ervaren tijdens deze update. Berichten die op dat moment worden verzonden, g"
+      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Update 6 november 2026, 17:00 uur Het overgrote deel van de koppelingen functioneert inmiddels weer naar behoren. De …",
+      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Update 6 november 2026, 17:00 uur Het overgrote deel van de koppelingen functioneert inmiddels weer naar behoren. De betreffende leveranciers van de koppelingen die op dit moment nog niet werken, zijn vandaag geïnformeerd om het probleem te verhelpen. Update 6 november 2026, 11:25 uur Het herstel vordert; steeds meer koppelingen werken weer naar behoren. We monitoren de situatie nauwlettend. Vrijdag 6 november 2026, 09:50 uur Storing: patiëntgegevens komen bij sommige koppelingen niet door Vanochtend hebben wij een certificaat vervangen. Een certificaatwissel vraagt ook actie bij gekoppelde partners: zij moeten het nieuwe certificaat aan hun kant activeren. Bij een deel van de partners is dat nog niet gebeurd. Wat merkt u hiervan? Bij de getroffen koppelingen worden gegevens niet doorgezet naar ZorgDomein. Verwijzers zien bijvoorbeeld dat patiëntgegevens niet worden meegeschreven naar de ZorgDomein-applicatie. Gebruikers kunnen problemen ervaren bij het inloggen vanuit het HIS. Wat doen wij? We zijn in nauw contact met de getroffen partijen. We begeleiden hen bij het activeren van het nieuwe certificaat en werken met alle capaciteit aan herstel. Zodra de koppelingen weer werken, melden we dat hier. Gepland onderhoud Er is momenteel geen onderhoud gepland. Storing melden? Klik hier om contact op te nemen met onze Support. Buiten kantooruren krijg je een externe supportmedewerker aan de lijn. Bij "
     },
     {
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-11-06T10:40:47+00:00",
+      "checked_at": "2026-11-06T17:52:54+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “alle systemen operationeel”",
       "components": [],
