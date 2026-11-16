@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-16T02:40:03+00:00",
+  "generated_at": "2026-11-16T10:55:36+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-11-16T02:39:46+00:00",
+      "checked_at": "2026-11-16T10:55:20+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “no current disturbances”",
       "components": [],
@@ -24,7 +24,7 @@
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-11-16T02:39:48+00:00",
+      "checked_at": "2026-11-16T10:55:22+00:00",
       "status": "incident",
       "detail": "Gevonden op de pagina: “actuele storing”",
       "components": [],
@@ -33,17 +33,17 @@
       "http_status": 200,
       "text_lengths": {
         "strict": 34,
-        "mild": 5666,
-        "raw": 13544
+        "mild": 2855,
+        "raw": 10733
       },
-      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Update e-mailverkeer 13 november 2026, 17:00 uur We zien goede vooruitgang in het e-mailverkeer. De wachtrij loopt te…",
-      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Update e-mailverkeer 13 november 2026, 17:00 uur We zien goede vooruitgang in het e-mailverkeer. De wachtrij loopt terug en steeds meer e-mails worden succesvol afgeleverd. Alle e-mails die in de wachtrij staan, worden uiteindelijk afgeleverd. In de komende uren verwachten wij dat dit grotendeels het geval is. Update Microsoft-storing: verbetering zichtbaar in het e-mailverkeer 13 november 2026, 15:30 uur Wat is er aan de hand? Door een wereldwijde storing bij Microsoft is het verzenden van e-mail vertraagd. We zien langzaam verbetering in het e-mailverkeer. Voorzichtig zien we dat we steeds meer berichten met succes kunnen afleveren, maar de situatie is nog niet volledig hersteld. Wat merk je hiervan? E-mails naar zorgverleners en patiënten kunnen later aankomen. Koppelingen zoals SQAPI, HL7 en FHIR werken gewoon door. We monitoren de situatie. Een update volgt zodra we meer weten. Update: herstel van de Microsoft-storing is gestart, e-mails kunnen nog vertraagd aankomen 13 november 2026, 11:00 uur Wat is er aan de hand? Microsoft meldt eerste tekenen van herstel van de wereldwijde storing. De capaciteit is nog niet terug op het normale niveau en de situatie blijft wisselend. Daardoor kunnen e-mails van zowel ZorgDomein als Boards nog steeds niet of te laat aankomen. Dit geldt alleen voor e-mail die via Microsoft wordt verstuurd. Wat betekent dit voor jou? Een e-mail die vertraagd is, kan later"
+      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Maandag, 16 november, 10:00 Actieve boards ten onrechte gearchiveerd Na een recente aanpassing voor het automatisch a…",
+      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Maandag, 16 november, 10:00 Actieve boards ten onrechte gearchiveerd Na een recente aanpassing voor het automatisch archiveren van afgeronde boards is helaas een grotere groep boards gearchiveerd dan de bedoeling was. Hierdoor zijn bepaalde actieve boards op dit moment niet direct zichtbaar in het overzicht. Er zijn geen patiëntgegevens verloren gegaan. Wat is er aan de hand? Om het overzicht in Boards te bewaren, hebben we een functie live gezet die boards automatisch archiveert twee maanden nadat de laatste verrichtingenstatus inactief is geworden. Op de achtergrond bleek deze verrichtingenstatus echter ook actief te zijn bij board-thema’s waarvoor dit proces helemaal niet geldt. Hierdoor zijn actieve boards ten onrechte als gearchiveerd gemarkeerd. Wat betekent dit voor jou? Ben je onderdeel van het initiërende team? Je kunt de patiënt en het gearchiveerde board nog steeds terugvinden via de patiëntenlijst . Vanuit daar kun je het board zelf direct weer op actief zetten. Ben je onderdeel van een uitgenodigd team? Voor uitgenodigde teams zijn gearchiveerde boards op dit moment niet zichtbaar en niet zelf te herstellen. Wat kun je nu doen? Heb je als uitgenodigd team met spoed toegang nodig tot een verdwenen board? Neem dan contact op met het initiërende team; zij kunnen het board via de patiëntenlijst direct voor alle betrokkenen weer actief maken. Is er geen directe haast, dan hoef je niets t"
     },
     {
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-11-16T02:39:59+00:00",
+      "checked_at": "2026-11-16T10:55:33+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “alle systemen operationeel”",
       "components": [],
@@ -51,12 +51,12 @@
       "method": "text:strict",
       "http_status": 200,
       "text_lengths": {
-        "strict": 6047,
-        "mild": 6047,
-        "raw": 6072
+        "strict": 5854,
+        "mild": 5854,
+        "raw": 5879
       },
       "match_context": "LanTel Cloud Status Alle systemen operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte ge…",
-      "excerpt": "LanTel Cloud Status Alle systemen operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat het ons weten! Let op: De LanTel Wiki is verhuisd! wiki.lantel.nl wordt niet meer gebruikt en onze documentatie is voortaan te vinden op docs.lantel.nl Onderhoud Geen onderhoud gemeld. Onderdelen LanTel Connect Operationeel LanTel Hosted Operationeel LanTel Hosted Blue Operationeel LanTel Hosted Move Operationeel LanTel Hosted Teams OC ? Operationeel LanTel Hosted Wave Operationeel Fax Diensten ? Operationeel Add-on - Aurora TeleQ Operationeel Add-on - CTI ? Operationeel Add-on - Hosted Teams Attendant Console Operationeel Add-on - Hosted Teams Contact Center Operationeel Add-on - Microsoft Teams bellen DR ? Operationeel LanTel Mobile Operationeel LanTel Service Operationeel LanTel Wiki Operationeel LanTel SIP Operationeel Via Operator Connect E-Fax, Faxen over IP Integratie met HIS/CRM applicaties Bellen met Microsoft Teams via LanTel Hosted Wave/Move/Flow. Direct Routing Incident geschiedenis Algemene storing Gesloten | 03.11.2026 | 10:00 GMT+01:00 Momenteel krijgen wij meerdere meldingen over problemen die ervaren worden met de telefonische bereikbaarheid of diensten. Deze meldingen worden onderzocht, wij zullen u via deze weg op de hoogte houden. Storing L"
+      "excerpt": "LanTel Cloud Status Alle systemen operationeel Bijgewerkt LanTel Cloud Status Op deze pagina vind je de actuele status van onze LanTel Cloud diensten. Op de hoogte gehouden worden van eventuele verstoringen en onderhoud? Meld je aan en je ontvangt email notificaties met de laatste statusupdates. Werkt er iets niet? Laat het ons weten! Let op: De LanTel Wiki is verhuisd! wiki.lantel.nl wordt niet meer gebruikt en onze documentatie is voortaan te vinden op docs.lantel.nl Onderhoud Geen onderhoud gemeld. Onderdelen LanTel Connect Operationeel LanTel Hosted Operationeel LanTel Hosted Blue Operationeel LanTel Hosted Move Operationeel LanTel Hosted Teams OC ? Operationeel LanTel Hosted Wave Operationeel Fax Diensten ? Operationeel Add-on - Aurora TeleQ Operationeel Add-on - CTI ? Operationeel Add-on - Hosted Teams Attendant Console Operationeel Add-on - Hosted Teams Contact Center Operationeel Add-on - Microsoft Teams bellen DR ? Operationeel LanTel Mobile Operationeel LanTel Service Operationeel LanTel Wiki Operationeel LanTel SIP Operationeel Via Operator Connect E-Fax, Faxen over IP Integratie met HIS/CRM applicaties Bellen met Microsoft Teams via LanTel Hosted Wave/Move/Flow. Direct Routing Incident geschiedenis Algemene storing - TeleQ Gesloten | 16.11.2026 | 08:48 GMT+01:00 De storing bij Aurora TeleQ is inmiddels opgelost en de dienstverlening is weer volledig beschikbaar. De telefonische bereikbaarheid functioneert weer naar behoren. Betrokken onderdelen LanTel Hosted: Add-"
     }
   ]
 }
