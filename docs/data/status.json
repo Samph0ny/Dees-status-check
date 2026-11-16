@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-16T10:55:36+00:00",
+  "generated_at": "2026-11-16T20:54:21+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-11-16T10:55:20+00:00",
+      "checked_at": "2026-11-16T20:54:05+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “no current disturbances”",
       "components": [],
@@ -24,7 +24,7 @@
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-11-16T10:55:22+00:00",
+      "checked_at": "2026-11-16T20:54:08+00:00",
       "status": "incident",
       "detail": "Gevonden op de pagina: “actuele storing”",
       "components": [],
@@ -33,17 +33,17 @@
       "http_status": 200,
       "text_lengths": {
         "strict": 34,
-        "mild": 2855,
-        "raw": 10733
+        "mild": 3477,
+        "raw": 11355
       },
-      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Maandag, 16 november, 10:00 Actieve boards ten onrechte gearchiveerd Na een recente aanpassing voor het automatisch a…",
-      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen Maandag, 16 november, 10:00 Actieve boards ten onrechte gearchiveerd Na een recente aanpassing voor het automatisch archiveren van afgeronde boards is helaas een grotere groep boards gearchiveerd dan de bedoeling was. Hierdoor zijn bepaalde actieve boards op dit moment niet direct zichtbaar in het overzicht. Er zijn geen patiëntgegevens verloren gegaan. Wat is er aan de hand? Om het overzicht in Boards te bewaren, hebben we een functie live gezet die boards automatisch archiveert twee maanden nadat de laatste verrichtingenstatus inactief is geworden. Op de achtergrond bleek deze verrichtingenstatus echter ook actief te zijn bij board-thema’s waarvoor dit proces helemaal niet geldt. Hierdoor zijn actieve boards ten onrechte als gearchiveerd gemarkeerd. Wat betekent dit voor jou? Ben je onderdeel van het initiërende team? Je kunt de patiënt en het gearchiveerde board nog steeds terugvinden via de patiëntenlijst . Vanuit daar kun je het board zelf direct weer op actief zetten. Ben je onderdeel van een uitgenodigd team? Voor uitgenodigde teams zijn gearchiveerde boards op dit moment niet zichtbaar en niet zelf te herstellen. Wat kun je nu doen? Heb je als uitgenodigd team met spoed toegang nodig tot een verdwenen board? Neem dan contact op met het initiërende team; zij kunnen het board via de patiëntenlijst direct voor alle betrokkenen weer actief maken. Is er geen directe haast, dan hoef je niets t"
+      "match_context": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen [UPDATE] Maandag 16 november, 14:45 – Opgelost We hebben alle onterecht gearchiveerde boards hersteld. Je ziet deze b…",
+      "excerpt": "Storingen & Onderhoud - ZorgDomein Home 5 Storingen & Onderhoud Actuele storingen [UPDATE] Maandag 16 november, 14:45 – Opgelost We hebben alle onterecht gearchiveerde boards hersteld. Je ziet deze boards nu weer gewoon in je actieve overzicht en kunt direct verder samenwerken. Er zijn geen patiëntgegevens verloren gegaan. Wat hebben we gedaan? We hebben het automatisch archiveren eerst stopgezet en daarna alle getroffen boards weer actief gemaakt. Mis je toch nog een board? Neem dan contact op met support via de chat of telefonisch. We kijken graag direct met je mee. Maandag 16 november, 10:00 Actieve boards ten onrechte gearchiveerd Na een recente aanpassing voor het automatisch archiveren van afgeronde boards is helaas een grotere groep boards gearchiveerd dan de bedoeling was. Hierdoor zijn bepaalde actieve boards op dit moment niet direct zichtbaar in het overzicht. Er zijn geen patiëntgegevens verloren gegaan. Wat is er aan de hand? Om het overzicht in Boards te bewaren, hebben we een functie live gezet die boards automatisch archiveert twee maanden nadat de laatste verrichtingenstatus inactief is geworden. Op de achtergrond bleek deze verrichtingenstatus echter ook actief te zijn bij board-thema’s waarvoor dit proces helemaal niet geldt. Hierdoor zijn actieve boards ten onrechte als gearchiveerd gemarkeerd. Wat betekent dit voor jou? Ben je onderdeel van het initiërende team? Je kunt de patiënt en het gearchiveerde board nog steeds terugvinden via de patiëntenlijst . V"
     },
     {
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-11-16T10:55:33+00:00",
+      "checked_at": "2026-11-16T20:54:18+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “alle systemen operationeel”",
       "components": [],
