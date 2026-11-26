@@ -1,30 +1,30 @@
 {
-  "generated_at": "2026-11-26T04:52:46+00:00",
+  "generated_at": "2026-11-26T14:56:01+00:00",
   "sites": [
     {
       "id": "aurora",
       "name": "Aurora Innovation",
       "url": "https://aurorainnovation.com/en/service-status/",
-      "checked_at": "2026-11-26T04:52:29+00:00",
-      "status": "ok",
-      "detail": "Gevonden op de pagina: “no current disturbances”",
+      "checked_at": "2026-11-26T14:55:44+00:00",
+      "status": "unknown",
+      "detail": "Geen bekende signaalwoorden gevonden — controleer de pagina zelf.",
       "components": [],
       "open_incidents": [],
       "method": "text:strict",
       "http_status": 200,
       "text_lengths": {
-        "strict": 125,
-        "mild": 198,
-        "raw": 3081
+        "strict": 439,
+        "mild": 512,
+        "raw": 3395
       },
-      "match_context": "Service Status Current service information Press the “+” to expand and view the ongoing disturbances. No current disturbances",
-      "excerpt": "Service Status Current service information Press the “+” to expand and view the ongoing disturbances. No current disturbances"
+      "match_context": "",
+      "excerpt": "Service Status Current service information Press the “+” to expand and view the ongoing disturbances. Sweden: incoming support emails As of today, we have technical issues with our Swedish support email, support@aurorainnovation.com and can’t receive emails. Therefor replies from us may take longer than usual. The issue is reported to our software supplier. Please call our support instead on +4618 19 44 55. Sorry for the inconvenience."
     },
     {
       "id": "zorgdomein",
       "name": "ZorgDomein",
       "url": "https://zorgdomein.com/actuele-storingen/",
-      "checked_at": "2026-11-26T04:52:32+00:00",
+      "checked_at": "2026-11-26T14:55:46+00:00",
       "status": "incident",
       "detail": "Gevonden op de pagina: “actuele storing”",
       "components": [],
@@ -43,7 +43,7 @@
       "id": "lantelcloud",
       "name": "Lantel Cloud",
       "url": "https://status.lantelcloud.nl/",
-      "checked_at": "2026-11-26T04:52:42+00:00",
+      "checked_at": "2026-11-26T14:55:58+00:00",
       "status": "ok",
       "detail": "Gevonden op de pagina: “alle systemen operationeel”",
       "components": [],
